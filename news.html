@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="sd" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSSF تازا پڌرناما</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f4f4; margin: 0; text-align: center; }
+        header { background: #e63946; color: white; padding: 20px; font-size: 24px; font-weight: bold; }
+        .container { padding: 20px; max-width: 700px; margin: auto; }
+        .back-btn { display: inline-block; margin-bottom: 20px; color: #1d3557; text-decoration: none; font-weight: bold; }
+        .news-card { 
+            background: white; margin-bottom: 15px; padding: 15px; 
+            border-radius: 12px; border-right: 6px solid #e63946; 
+            text-align: right; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .news-date { color: gray; font-size: 12px; display: block; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <header>JSSF پريس رليز</header>
+
+    <div class="container">
+        <a href="index.html" class="back-btn">← واپس مين پيج</a>
+        <div id="full-news-container">پڌرناما لوڊ ٿي رهيا آهن...</div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyDTQkbwawj4Hxihxx3Z0hcwS3HhuNjXttw",
+            databaseURL: "https://jssf-jsqm-portal-ed46c-default-rtdb.firebaseio.com",
+            projectId: "jssf-jsqm-portal-ed46c",
+            appId: "1:583976265356:web:d6753b8eb3a96aa5f83da9"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // سڀئي خبرون فائربيس مان کڻڻ
+        onValue(ref(db, 'announcements'), (snapshot) => {
+            const container = document.getElementById('full-news-container');
+            container.innerHTML = "";
+            const data = snapshot.val();
+            if(data) {
+                // نين خبرن کي مٿي ڏيکارڻ لاءِ reverse ڪيو ويو آهي
+                Object.values(data).reverse().forEach(news => {
+                    container.innerHTML += `
+                        <div class="news-card">
+                            <strong>${news.title}</strong>
+                            <p>${news.message}</p>
+                            <span class="news-date">${news.date || ''}</span>
+                        </div>`;
+                });
+            } else {
+                container.innerHTML = "في الحال ڪو پڌرنامو موجود ناهي.";
+            }
+        });
+    </script>
+</body>
+</html>
+
