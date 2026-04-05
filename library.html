@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="sd" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSSF لائبرري</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f4f4; margin: 0; text-align: center; }
+        header { background: #1d3557; color: white; padding: 20px; font-size: 24px; }
+        .container { padding: 20px; max-width: 600px; margin: auto; }
+        .book-card { background: white; margin: 10px 0; padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; border-right: 5px solid #2a9d8f; text-align: right; }
+        .dl-btn { background: #2a9d8f; color: white; text-decoration: none; padding: 8px 12px; border-radius: 5px; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <header>JSSF ڊجيٽل لائبرري</header>
+    <div class="container">
+        <a href="index.html" style="text-decoration:none; color:#1d3557;">← واپس مين پيج</a>
+        <div id="library-list" style="margin-top:20px;">لوڊ ٿي رهيو آهي...</div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        const firebaseConfig = {
+            apiKey: "AIzaSyDTQkbwawj4Hxihxx3Z0hcwS3HhuNjXttw",
+            databaseURL: "https://jssf-jsqm-portal-ed46c-default-rtdb.firebaseio.com",
+            projectId: "jssf-jsqm-portal-ed46c",
+            appId: "1:583976265356:web:d6753b8eb3a96aa5f83da9"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        onValue(ref(db, 'library'), (snapshot) => {
+            const list = document.getElementById('library-list');
+            list.innerHTML = "";
+            const data = snapshot.val();
+            if(data) {
+                Object.values(data).forEach(book => {
+                    list.innerHTML += `<div class="book-card"><span>${book.title}</span><a href="${book.link}" class="dl-btn">ڊائون لوڊ</a></div>`;
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+
