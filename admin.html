@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="sd" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>JSSF محفوظ ايڊمن پينل</title>
+    <style>
+        body { font-family: sans-serif; background: #f0f2f5; padding: 10px; text-align: center; }
+        #login-box { background: white; padding: 30px; border-radius: 15px; max-width: 350px; margin: 100px auto; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        #admin-content { display: none; }
+        .box { background: white; padding: 20px; border-radius: 12px; max-width: 700px; margin: 15px auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: right; }
+        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        button { background: #1d3557; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #eee; padding: 10px; text-align: center; }
+        .del-btn { background: #e63946; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div id="login-box">
+        <h3>ايڊمن لاگن</h3>
+        <input type="password" id="passInput" placeholder="پاسورڊ لکو">
+        <button onclick="checkPass()">داخل ٿيو</button>
+    </div>
+
+    <div id="admin-content">
+        <h2>JSSF مينيجمينٽ ڪنٽرول</h2>
+        
+        <div class="box">
+            <h3>نئون پڌرنامو لڳايو</h3>
+            <input type="text" id="nTitle" placeholder="عنوان">
+            <textarea id="nMsg" rows="3" placeholder="خبر جو تفصيل..."></textarea>
+            <button id="btnNews">پڌرنامو جاري ڪريو</button>
+        </div>
+
+        <div class="box">
+            <h3>ميمبر مينيجمينٽ (Data Control)</h3>
+            <table>
+                <thead><tr style="background:#f8f9fa;"><th>نالو</th><th>واٽس اپ</th><th>ڪارروائي</th></tr></thead>
+                <tbody id="memberList"></tbody>
+            </table>
+        </div>
+
+        <div class="box">
+            <h3>لائبرري ۾ ڪتاب شامل ڪريو</h3>
+            <input type="text" id="bTitle" placeholder="ڪتاب جو نالو">
+            <input type="text" id="bLink" placeholder="PDF لنڪ">
+            <button id="btnBook">ڪتاب اپلوڊ ڪريو</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyDTQkbwawj4Hxihxx3Z0hcwS3HhuNjXttw",
+            databaseURL: "https://jssf-jsqm-portal-ed46c-default-rtdb.firebaseio.com",
+            projectId: "jssf-jsqm-portal-ed46c",
+            appId: "1:583976265356:web:d6753b8eb3a96aa5f83da9"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // پاسورڊ چيڪ ڪرڻ جو فنڪشن
+        window.checkPass = () => {
+            const pass = document.getElementById('passInput').value;
+            if(pass === "jssf2026") {
+                document.getElementById('login-box').style.display = "none";
+                document.getElementById('admin-content').style.display = "block";
+            } else { alert("غلط پاسورڊ!"); }
+        };
+
+        // خبرون لڳائڻ
+        document.getElementById('btnNews').onclick = () => {
+            push(ref(db, 'announcements'), { title: document.getElementById('nTitle').value, message: document.getElementById('nMsg').value, date: new Date().toLocaleDateString() });
+            alert("خبر جاري ٿي!");
+        };
+
+        // ڪتاب لڳائڻ
+        document.getElementById('btnBook').onclick = () => {
+            push(ref(db, 'library'), { title: document.getElementById('bTitle').value, link: document.getElementById('bLink').value });
+            alert("ڪتاب شامل ٿيو!");
+        };
+
+        // ميمبر ڏيکارڻ ۽ ڊليٽ ڪرڻ
+        onValue(ref(db, 'members'), (snapshot) => {
+            const list = document.getElementById('memberList');
+            list.innerHTML = "";
+            snapshot.forEach((child) => {
+                list.innerHTML += `<tr><td>${child.val().fullName}</td><td>${child.val().whatsapp}</td><td><button class="del-btn" onclick="del('${child.key}')">ڊليٽ</button></td></tr>`;
+            });
+        });
+
+        window.del = (key) => { if(confirm("ڊليٽ ڪجي؟")) remove(ref(db, 'members/' + key)); };
+    </script>
+</body>
+</html>
+
