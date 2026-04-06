@@ -4,54 +4,84 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JSSF JSQM PORTAL</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lateef&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { font-family: sans-serif; background: #f4f4f4; margin: 0; text-align: center; }
-        header { background: #e63946; color: white; padding: 20px; font-size: 24px; font-weight: bold; }
-        .nav-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 20px; max-width: 600px; margin: auto; }
-        .nav-btn { background: #1d3557; color: white; padding: 18px; border-radius: 12px; text-decoration: none; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .news-section { background: white; margin: 20px auto; padding: 15px; border-radius: 12px; border-right: 6px solid #e63946; max-width: 600px; }
-        .news-card { border-bottom: 1px solid #eee; padding: 12px; text-align: right; }
-        .news-card:last-child { border: none; }
+        :root { --red: #d32f2f; --black: #1a1a1a; --white: #ffffff; }
+        body { font-family: 'Lateef', cursive; background: #f0f2f5; margin: 0; font-size: 22px; }
+        .top-header { text-align: center; background: var(--white); padding: 20px; border-bottom: 4px solid var(--red); }
+        .logo { width: 120px; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .main-title { color: var(--red); font-size: 35px; margin-top: 10px; font-weight: bold; }
+        
+        .nav-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 15px; max-width: 800px; margin: auto; }
+        .nav-btn { background: var(--red); color: white; padding: 15px; text-decoration: none; border-radius: 10px; text-align: center; font-size: 20px; transition: 0.3s; }
+        .nav-btn:hover { background: var(--black); }
+        .nav-btn i { display: block; font-size: 30px; margin-bottom: 5px; }
+
+        .section-title { background: var(--black); color: white; padding: 10px; text-align: center; margin-top: 20px; }
+        .content-area { max-width: 800px; margin: auto; padding: 15px; }
+        .news-card { background: white; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden; }
+        .news-card img { width: 100%; }
+        .news-card-body { padding: 15px; }
+
+        .social-bar { text-align: center; padding: 20px; background: var(--black); margin-top: 30px; }
+        .social-bar a { color: white; font-size: 30px; margin: 0 15px; text-decoration: none; }
+        .social-bar a:hover { color: var(--red); }
     </style>
 </head>
 <body>
-    <header>JSSF JSQM PORTAL</header>
 
-    <div class="nav-menu">
-        <a href="membership.html" class="nav-btn">ميمبرشپ فارم</a>
-        <a href="library.html" class="nav-btn">ڊجيٽل لائبرري</a>
-        <a href="gallery.html" class="nav-btn">فوٽو گيلري</a>
-        <a href="admin.html" class="nav-btn" style="background:#457b9d;">ايڊمن ڪنٽرول</a>
+    <div class="top-header">
+        <img src="https://dphtkbzfgiaxghommegd.supabase.co/storage/v1/object/public/jssf-media/logo.png" class="logo">
+        <div class="main-title">جيئي سنڌ اسٽوڊنٽس فيڊريشن</div>
     </div>
 
-    <div class="news-section">
-        <h3>تازا پڌرناما (Press Release)</h3>
-        <div id="news-container">لوڊ ٿي رهيو آهي...</div>
+    <div class="section-title">مرڪزي پريس رليز / نيوز</div>
+    <div class="content-area" id="news-feed">لوڊ ٿي رهيو آهي...</div>
+
+    <div class="section-title">مينيو</div>
+    <div class="nav-grid">
+        <a href="gallery.html" class="nav-btn"><i class="fas fa-images"></i> جساف گيلري</a>
+        <a href="admin.html" class="nav-btn"><i class="fas fa-lock"></i> ايڊمن پيج</a>
+        <a href="library.html" class="nav-btn"><i class="fas fa-book"></i> لائبرري</a>
+        <a href="body.html" class="nav-btn"><i class="fas fa-users"></i> ست رڪني باڊي</a>
+        <a href="manifesto.html" class="nav-btn"><i class="fas fa-file-alt"></i> منشور</a>
+        <a href="complaint.html" class="nav-btn"><i class="fas fa-comment-dots"></i> شڪايت باڪس</a>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-        
-        const firebaseConfig = {
-            apiKey: "AIzaSyDTQkbwawj4Hxihxx3Z0hcwS3HhuNjXttw",
-            databaseURL: "https://jssf-jsqm-portal-ed46c-default-rtdb.firebaseio.com",
-            projectId: "jssf-jsqm-portal-ed46c",
-            appId: "1:583976265356:web:d6753b8eb3a96aa5f83da9"
-        };
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
+    <div class="social-bar">
+        <a href="https://facebook.com/world_sindhi" target="_blank"><i class="fab fa-facebook"></i></a>
+        <a href="https://youtube.com/world_sindhi" target="_blank"><i class="fab fa-youtube"></i></a>
+        <a href="https://twitter.com" target="_blank"><i class="fab fa-twitter"></i></a>
+        <a href="https://wa.me/92xxxxxxxxxx" target="_blank"><i class="fab fa-whatsapp"></i></a>
+        <p style="color: white; font-size: 14px; margin-top: 10px;">© 2026 JSSF JSQM PORTAL</p>
+    </div>
 
-        onValue(ref(db, 'announcements'), (snapshot) => {
-            const container = document.getElementById('news-container');
-            container.innerHTML = "";
-            const data = snapshot.val();
+    <script>
+        const SB_URL = "https://dphtkbzfgiaxghommegd.supabase.co";
+        const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRwaHRrYnpmZ2lheGdob21tZWdkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTA2MjMsImV4cCI6MjA5MDk4NjYyM30.GPHVERT8PzCwggjkwAQOLgYoSioSmSY0y8g3ZcrPHAU";
+        const _client = supabase.createClient(SB_URL, SB_KEY);
+
+        async function getNews() {
+            const { data } = await _client.from('announcements').select('*').order('created_at', { ascending: false });
+            const feed = document.getElementById('news-feed');
             if(data) {
-                Object.values(data).reverse().forEach(news => {
-                    container.innerHTML += `<div class="news-card"><strong>${news.title}</strong><p>${news.message}</p><small style="color:gray;">${news.date || ''}</small></div>`;
+                feed.innerHTML = "";
+                data.forEach(n => {
+                    feed.innerHTML += `
+                        <div class="news-card">
+                            ${n.image_url ? `<img src="${n.image_url}">` : ''}
+                            <div class="news-card-body">
+                                <h3 style="color:var(--red);">${n.title}</h3>
+                                <p>${n.message}</p>
+                            </div>
+                        </div>`;
                 });
-            } else { container.innerHTML = "في الحال ڪو پڌرنامو ناهي."; }
-        });
+            }
+        }
+        getNews();
     </script>
+    <link rel="manifest" href="manifest.json">
 </body>
 </html>
