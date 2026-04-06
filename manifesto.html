@@ -4,86 +4,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JSSF Manifesto - منشور</title>
-    
     <link href="https://fonts.googleapis.com/css2?family=Lateef&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
     <style>
-        :root { --blue: #0d2a4a; --red: #d32f2f; --bg: #f4f7f6; }
-        body { font-family: 'Lateef', cursive; background: var(--bg); margin: 0; padding: 0; font-size: 22px; color: #333; }
+        :root { --blue: #0d2a4a; --red: #d32f2f; --white: #ffffff; }
+        body { font-family: 'Lateef', cursive; background: #f4f7f6; margin: 0; padding: 0; font-size: 22px; }
+        
+        .header { background: var(--blue); color: white; padding: 25px; text-align: center; position: relative; }
+        .back-btn { position: absolute; right: 15px; top: 25px; color: white; text-decoration: none; font-size: 24px; }
 
-        /* هيڊر */
-        .header { background: var(--blue); padding: 30px 15px; text-align: center; color: white; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .back-btn { position: absolute; right: 20px; top: 35px; color: white; font-size: 24px; text-decoration: none; }
-        .header h2 { margin: 0; font-size: 32px; }
-
-        .container { padding: 20px; max-width: 800px; margin: auto; }
-
-        /* PDF ڊائون لوڊ سيڪشن */
-        .download-card { background: white; border-radius: 15px; padding: 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 25px; border-top: 5px solid var(--red); }
-        .download-card i { font-size: 50px; color: var(--red); margin-bottom: 15px; }
-        .download-card h4 { margin: 10px 0; font-size: 26px; color: var(--blue); }
-        .btn-download { background: var(--red); color: white; padding: 12px 25px; border-radius: 30px; text-decoration: none; display: inline-block; font-weight: bold; transition: 0.3s; margin-top: 10px; }
-        .btn-download:hover { transform: scale(1.05); background: #b71c1c; }
+        .container { padding: 20px; max-width: 700px; margin: auto; }
+        
+        /* PDF ڪارڊ */
+        .pdf-card { background: white; border-radius: 15px; padding: 25px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 6px solid var(--red); margin-bottom: 25px; }
+        .pdf-card i { font-size: 55px; color: var(--red); margin-bottom: 15px; }
+        .download-link { background: var(--red); color: white; padding: 12px 30px; border-radius: 25px; text-decoration: none; display: inline-block; font-weight: bold; margin-top: 15px; transition: 0.3s; }
+        .download-link:hover { transform: scale(1.05); background: #b71c1c; }
 
         /* لکت ۾ منشور */
-        .manifesto-content { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); line-height: 1.8; text-align: justify; }
-        .manifesto-content h3 { color: var(--red); border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 0; font-size: 30px; text-align: center; }
-        
-        .point { margin-bottom: 20px; padding-right: 15px; border-right: 4px solid var(--blue); }
-        .point-title { font-weight: bold; color: var(--blue); font-size: 24px; display: block; }
+        .manifesto-text { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: justify; line-height: 1.8; }
+        .manifesto-text h3 { color: var(--blue); border-bottom: 2px solid #eee; padding-bottom: 10px; text-align: center; font-size: 32px; }
+        .point { border-right: 4px solid var(--red); padding-right: 15px; margin-bottom: 20px; }
+        .point-head { font-weight: bold; color: var(--red); display: block; font-size: 26px; }
 
-        .footer-tag { text-align: center; color: #999; font-size: 16px; padding: 30px 0; }
+        .footer-note { text-align: center; padding: 30px; color: #999; font-size: 16px; }
     </style>
 </head>
 <body>
 
     <div class="header">
         <a href="index.html" class="back-btn"><i class="fas fa-arrow-right"></i></a>
-        <h2>آئين ۽ منشور</h2>
+        <h2>جيئي سنڌ اسٽوڊنٽس فيڊريشن</h2>
     </div>
 
     <div class="container">
-        
-        <div class="download-card">
+        <div class="pdf-card">
             <i class="fas fa-file-pdf"></i>
-            <h4>جساف جو مڪمل آئين (PDF)</h4>
-            <p>مڪمل آئين ۽ منشور پڙهڻ لاءِ فائل ڊائون لوڊ ڪريو.</p>
-            <a href="assets/manifesto.pdf" download class="btn-download">
-                <i class="fas fa-cloud-download-alt"></i> فائل ڊائون لوڊ ڪريو
+            <h3>آئين ۽ منشور (PDF)</h3>
+            <p>جساف جو مڪمل آئين ۽ منشور PDF فائل ۾ حاصل ڪرڻ لاءِ هيٺ ڪلڪ ڪريو.</p>
+            <a href="https://dphtkbzfgiaxghommegd.supabase.co/storage/v1/object/public/jssf-media/manifesto.pdf" target="_blank" class="download-link">
+                <i class="fas fa-download"></i> ڊائون لوڊ ڪريو
             </a>
         </div>
 
-        <div class="manifesto-content">
+        <div class="manifesto-text">
             <h3>منشور جا مکيه نڪتا</h3>
             
             <div class="point">
-                <span class="point-title">تعليمي حق:</span>
-                سنڌ جي هر شاگرد کي معياري ۽ مفت تعليمي سهولتون فراهم ڪرڻ لاءِ جدوجهد ڪرڻ.
+                <span class="point-head">قومي تعليم:</span>
+                سنڌ جي سمورن تعليمي ادارن ۾ سنڌي ٻوليءَ کي تعليمي ذريعو بڻائڻ ۽ مفت تعليم جي فراهمي.
             </div>
 
             <div class="point">
-                <span class="point-title">قومي شعور:</span>
-                شاگردن ۾ قومي ۽ سياسي شعور پيدا ڪري کين سنڌ جي روشن مستقبل لاءِ تيار ڪرڻ.
+                <span class="point-head">شاگرد يونين:</span>
+                تعليمي ادارن ۾ شاگرد يونين جي بحالي ۽ شاگردن جي چونڊيل نمائندگي کي يقيني بڻائڻ.
             </div>
 
             <div class="point">
-                <span class="point-title">ثقافتي تحفظ:</span>
-                سنڌي ٻولي، ثقافت ۽ تاريخي ورثي جي حفاظت لاءِ عملي قدم کڻڻ.
+                <span class="point-head">ثقافتي ورثو:</span>
+                سنڌ جي هزارين سالن جي تاريخ، ثقافت ۽ تهذيب جي حفاظت ۽ واڌاري لاءِ شاگردن ۾ شعور پيدا ڪرڻ.
             </div>
 
             <div class="point">
-                <span class="point-title">شاگرد سياست:</span>
-                تعليمي ادارن ۾ شاگرد يونين جي بحالي ۽ شاگردن جي بنيادي حقن جو تحفظ.
+                <span class="point-head">حق ۽ سچ:</span>
+                سنڌ جي وسيلن تي سنڌين جي حق لاءِ شاگردن جي پليٽ فارم تان جاکوڙ ڪرڻ.
             </div>
-
-            <p style="text-align: center; color: #777; margin-top: 30px;">
-                (هتي توهان پنهنجي تنظيم جو پورو منشور لکي سگهو ٿا)
-            </p>
         </div>
 
-        <div class="footer-tag">JSSF Official Portal | Developed by Mehtab Khan</div>
+        <div class="footer-note">Developed by Mehtab Khan | 2K22/SWEE/42</div>
     </div>
 
 </body>
-</html>
+                </html>
