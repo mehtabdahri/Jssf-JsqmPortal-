@@ -3,45 +3,229 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JSSF لائبرري</title>
+    <title>JSSF Digital Library - ڊجيٽل لائبرري</title>
+    
+    <link rel="manifest" href="manifest.json">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Lateef&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
-        body { font-family: sans-serif; background: #f4f4f4; margin: 0; text-align: center; }
-        header { background: #1d3557; color: white; padding: 20px; font-size: 24px; }
-        .container { padding: 20px; max-width: 600px; margin: auto; }
-        .book-card { background: white; margin: 10px 0; padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; border-right: 5px solid #2a9d8f; text-align: right; }
-        .dl-btn { background: #2a9d8f; color: white; text-decoration: none; padding: 8px 12px; border-radius: 5px; font-size: 14px; }
+        :root { --red: #d32f2f; --black: #1a1a1a; --white: #ffffff; }
+        
+        body { 
+            font-family: 'Lateef', cursive; 
+            background: #f8f9fa; 
+            margin: 0; 
+            padding-bottom: 50px; 
+            font-size: 22px; 
+            color: var(--black);
+        }
+
+        /* هيڊر ڊيزائن */
+        .header { 
+            background: var(--red); 
+            color: white; 
+            padding: 30px 15px; 
+            text-align: center; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2); 
+        }
+        .header h1 { margin: 0; font-size: 42px; }
+        .header p { margin: 5px 0 0; font-size: 20px; opacity: 0.9; }
+
+        .container { max-width: 1000px; margin: auto; padding: 20px; }
+
+        /* سرچ بار اسٽائل */
+        .search-container { 
+            margin-bottom: 30px; 
+            position: relative; 
+            max-width: 600px; 
+            margin-left: auto; 
+            margin-right: auto;
+        }
+        .search-container input { 
+            width: 100%; 
+            padding: 15px 45px 15px 15px; 
+            border-radius: 50px; 
+            border: 2px solid var(--red); 
+            font-family: 'Lateef'; 
+            font-size: 22px; 
+            outline: none; 
+            box-sizing: border-box;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .search-container i { 
+            position: absolute; 
+            right: 20px; 
+            top: 20px; 
+            color: var(--red); 
+        }
+
+        /* ڪتابن جي گريڊ */
+        .library-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
+            gap: 20px; 
+        }
+
+        .book-card { 
+            background: var(--white); 
+            border-radius: 15px; 
+            padding: 25px 15px; 
+            text-align: center; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05); 
+            text-decoration: none; 
+            color: var(--black); 
+            transition: all 0.3s ease;
+            border: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .book-card:hover { 
+            transform: translateY(-8px); 
+            box-shadow: 0 10px 20px rgba(211, 47, 47, 0.2); 
+            border-color: var(--red);
+        }
+
+        .book-card i { 
+            font-size: 60px; 
+            color: var(--red); 
+            margin-bottom: 15px; 
+        }
+
+        .book-card span { 
+            font-weight: bold; 
+            font-size: 20px; 
+            line-height: 1.2;
+            word-wrap: break-word;
+        }
+
+        .loading { text-align: center; color: #777; padding: 40px; font-size: 24px; }
+        
+        .no-result { 
+            grid-column: 1 / -1; 
+            text-align: center; 
+            color: #d32f2f; 
+            padding: 20px; 
+            font-weight: bold; 
+        }
+
+        .footer-nav {
+            text-align: center;
+            margin-top: 40px;
+        }
+        .footer-nav a {
+            color: var(--red);
+            text-decoration: none;
+            font-weight: bold;
+            border: 2px solid var(--red);
+            padding: 8px 20px;
+            border-radius: 20px;
+            transition: 0.3s;
+        }
+        .footer-nav a:hover {
+            background: var(--red);
+            color: white;
+        }
     </style>
 </head>
 <body>
-    <header>JSSF ڊجيٽل لائبرري</header>
-    <div class="container">
-        <a href="index.html" style="text-decoration:none; color:#1d3557;">← واپس مين پيج</a>
-        <div id="library-list" style="margin-top:20px;">لوڊ ٿي رهيو آهي...</div>
+
+    <div class="header">
+        <h1><i class="fas fa-book-open"></i> جساف ڊجيٽل لائبرري</h1>
+        <p>علم پرايو، سنڌ بچايو!</p>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-        const firebaseConfig = {
-            apiKey: "AIzaSyDTQkbwawj4Hxihxx3Z0hcwS3HhuNjXttw",
-            databaseURL: "https://jssf-jsqm-portal-ed46c-default-rtdb.firebaseio.com",
-            projectId: "jssf-jsqm-portal-ed46c",
-            appId: "1:583976265356:web:d6753b8eb3a96aa5f83da9"
-        };
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
+    <div class="container">
+        
+        <div class="search-container">
+            <i class="fas fa-search"></i>
+            <input type="text" id="search-box" onkeyup="filterBooks()" placeholder="ڪتاب جو نالو ڳوليو...">
+        </div>
 
-        onValue(ref(db, 'library'), (snapshot) => {
-            const list = document.getElementById('library-list');
-            list.innerHTML = "";
-            const data = snapshot.val();
-            if(data) {
-                Object.values(data).forEach(book => {
-                    list.innerHTML += `<div class="book-card"><span>${book.title}</span><a href="${book.link}" class="dl-btn">ڊائون لوڊ</a></div>`;
+        <div id="books-list" class="library-grid">
+            <div class="loading">ڪتاب لوڊ ٿي رهيا آهن...</div>
+        </div>
+
+        <div class="footer-nav">
+            <a href="index.html"><i class="fas fa-home"></i> مکيه صفحي تي وڃو</a>
+        </div>
+    </div>
+
+    <script>
+        // Supabase ڪنيڪشن
+        const SB_URL = "https://dphtkbzfgiaxghommegd.supabase.co";
+        const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRwaHRrYnpmZ2lheGdob21tZWdkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTA2MjMsImV4cCI6MjA5MDk4NjYyM30.GPHVERT8PzCwggjkwAQOLgYoSioSmSY0y8g3ZcrPHAU";
+        const _client = supabase.createClient(SB_URL, SB_KEY);
+
+        async function loadLibrary() {
+            const listDiv = document.getElementById('books-list');
+
+            try {
+                // ڊيٽابيس مان لائبرري ڊيٽا کڻڻ
+                const { data, error } = await _client
+                    .from('library')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                if (data.length === 0) {
+                    listDiv.innerHTML = "<p class='no-result'>هن وقت لائبرري ۾ ڪو ڪتاب موجود ناهي.</p>";
+                    return;
+                }
+
+                listDiv.innerHTML = ""; // لوڊنگ ختم ڪريو
+                data.forEach(book => {
+                    listDiv.innerHTML += `
+                        <a href="${book.link}" class="book-card" target="_blank">
+                            <i class="fas fa-file-pdf"></i>
+                            <span>${book.title}</span>
+                        </a>
+                    `;
                 });
+
+            } catch (err) {
+                listDiv.innerHTML = "<p style='color:red; text-align:center;'>ڊيٽا لوڊ ڪرڻ ۾ غلطي آئي آهي.</p>";
+                console.error(err);
             }
-        });
+        }
+
+        // سرچ فلٽر فنڪشن
+        function filterBooks() {
+            let input = document.getElementById('search-box').value.toLowerCase();
+            let cards = document.getElementsByClassName('book-card');
+            let found = false;
+
+            for (let i = 0; i < cards.length; i++) {
+                let title = cards[i].innerText.toLowerCase();
+                if (title.includes(input)) {
+                    cards[i].style.display = "flex";
+                    found = true;
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+
+            // جيڪڏهن ڪجهه نه ملي
+            const list = document.getElementById('books-list');
+            let noRes = document.getElementById('no-msg');
+            if (!found && input !== "") {
+                if (!noRes) {
+                    list.insertAdjacentHTML('afterend', '<p id="no-msg" class="no-result">اهڙو ڪو ڪتاب نه مليو!</p>');
+                }
+            } else if (noRes) {
+                noRes.remove();
+            }
+        }
+
+        // پيج کليو ته فنڪشن هلي
+        loadLibrary();
     </script>
+    <link rel="manifest" href="manifest.json">
 </body>
 </html>
-
