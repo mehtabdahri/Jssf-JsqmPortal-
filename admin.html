@@ -2,98 +2,177 @@
 <html lang="sd" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>JSSF محفوظ ايڊمن پينل</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSSF Master Admin Control</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lateef&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { font-family: sans-serif; background: #f0f2f5; padding: 10px; text-align: center; }
-        #login-box { background: white; padding: 30px; border-radius: 15px; max-width: 350px; margin: 100px auto; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        #admin-content { display: none; }
-        .box { background: white; padding: 20px; border-radius: 12px; max-width: 700px; margin: 15px auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: right; }
-        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        button { background: #1d3557; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { border: 1px solid #eee; padding: 10px; text-align: center; }
-        .del-btn { background: #e63946; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
+        :root { --red: #d32f2f; --dark: #1a1a1a; }
+        body { font-family: 'Lateef', cursive; background: #f0f2f5; margin: 0; font-size: 20px; }
+        
+        /* پاسورڊ لاڪ اسڪرين */
+        #lock-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--dark); display: flex; align-items: center; justify-content: center; z-index: 10000; }
+        .login-box { background: #222; padding: 30px; border-radius: 15px; border: 2px solid var(--red); text-align: center; width: 90%; max-width: 350px; }
+
+        /* نيويگيشن بار */
+        .admin-nav { background: var(--red); padding: 10px; display: flex; overflow-x: auto; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        .admin-nav button { background: rgba(255,255,255,0.1); border: 1px solid white; color: white; margin: 0 5px; padding: 8px 15px; border-radius: 5px; font-family: 'Lateef'; cursor: pointer; white-space: nowrap; }
+        .admin-nav button.active { background: white; color: var(--red); font-weight: bold; }
+
+        .container { max-width: 800px; margin: 20px auto; padding: 10px; }
+        .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 25px; border-right: 6px solid var(--red); }
+        
+        h2 { color: var(--red); text-align: center; }
+        h3 { margin-top: 0; color: var(--dark); display: flex; align-items: center; gap: 10px; }
+        
+        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 8px; font-family: 'Lateef'; font-size: 20px; box-sizing: border-box; }
+        button.action-btn { width: 100%; padding: 15px; background: var(--red); color: white; border: none; border-radius: 8px; font-size: 24px; cursor: pointer; transition: 0.3s; }
+        button.action-btn:hover { background: var(--dark); }
+
+        /* شڪايتن جي ٽيبل */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; font-size: 18px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: right; }
+        th { background: #f8f8f8; color: var(--red); }
+
+        .tab-content { display: none; animation: fadeIn 0.5s; }
+        .active-tab { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .status { font-weight: bold; text-align: center; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <div id="login-box">
-        <h3>ايڊمن لاگن</h3>
-        <input type="password" id="passInput" placeholder="پاسورڊ لکو">
-        <button onclick="checkPass()">داخل ٿيو</button>
-    </div>
-
-    <div id="admin-content">
-        <h2>JSSF مينيجمينٽ ڪنٽرول</h2>
-        
-        <div class="box">
-            <h3>نئون پڌرنامو لڳايو</h3>
-            <input type="text" id="nTitle" placeholder="عنوان">
-            <textarea id="nMsg" rows="3" placeholder="خبر جو تفصيل..."></textarea>
-            <button id="btnNews">پڌرنامو جاري ڪريو</button>
-        </div>
-
-        <div class="box">
-            <h3>ميمبر مينيجمينٽ (Data Control)</h3>
-            <table>
-                <thead><tr style="background:#f8f9fa;"><th>نالو</th><th>واٽس اپ</th><th>ڪارروائي</th></tr></thead>
-                <tbody id="memberList"></tbody>
-            </table>
-        </div>
-
-        <div class="box">
-            <h3>لائبرري ۾ ڪتاب شامل ڪريو</h3>
-            <input type="text" id="bTitle" placeholder="ڪتاب جو نالو">
-            <input type="text" id="bLink" placeholder="PDF لنڪ">
-            <button id="btnBook">ڪتاب اپلوڊ ڪريو</button>
+    <div id="lock-screen">
+        <div class="login-box">
+            <h2 style="color: white;">ايڊمن سيڪيورٽي</h2>
+            <input type="password" id="pass-input" placeholder="پاس ڪوڊ لکو...">
+            <button class="action-btn" onclick="verifyAccess()">کوليو</button>
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    <div class="admin-nav">
+        <button onclick="showTab('news-tab', this)" class="active">پريس رليز</button>
+        <button onclick="showTab('body-tab', this)">باڊي ڪنٽرول</button>
+        <button onclick="showTab('lib-tab', this)">لائبرري اپلوڊ</button>
+        <button onclick="showTab('complaints-tab', this)">شڪايتون ڏسو</button>
+    </div>
+
+    <div class="container">
         
-        const firebaseConfig = {
-            apiKey: "AIzaSyDTQkbwawj4Hxihxx3Z0hcwS3HhuNjXttw",
-            databaseURL: "https://jssf-jsqm-portal-ed46c-default-rtdb.firebaseio.com",
-            projectId: "jssf-jsqm-portal-ed46c",
-            appId: "1:583976265356:web:d6753b8eb3a96aa5f83da9"
-        };
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
+        <div id="news-tab" class="tab-content active-tab">
+            <div class="card">
+                <h3><i class="fas fa-bullhorn"></i> نيوز ۽ پريس رليز موڪليو</h3>
+                <input type="text" id="n-title" placeholder="خبر جو عنوان">
+                <textarea id="n-msg" rows="4" placeholder="خبر جو تفصيل لکو..."></textarea>
+                <input type="file" id="n-file" accept="image/*">
+                <button class="action-btn" onclick="uploadData('news')">شايع ڪريو</button>
+                <div id="st-news" class="status"></div>
+            </div>
+        </div>
 
-        // پاسورڊ چيڪ ڪرڻ جو فنڪشن
-        window.checkPass = () => {
-            const pass = document.getElementById('passInput').value;
-            if(pass === "jssf2026") {
-                document.getElementById('login-box').style.display = "none";
-                document.getElementById('admin-content').style.display = "block";
-            } else { alert("غلط پاسورڊ!"); }
-        };
+        <div id="body-tab" class="tab-content">
+            <div class="card">
+                <h3><i class="fas fa-users-cog"></i> باڊي جا نالا تبديل ڪريو</h3>
+                <input type="text" id="pos1" placeholder="صدر جو نالو">
+                <input type="text" id="pos2" placeholder="نائب صدر">
+                <input type="text" id="pos3" placeholder="جنرل سيڪريٽري">
+                <input type="text" id="pos4" placeholder="تعليم سيڪريٽري">
+                <input type="text" id="pos5" placeholder="جوئٽ سيڪريٽري">
+                <input type="text" id="pos6" placeholder="مالياتي سيڪريٽري">
+                <input type="text" id="pos7" placeholder="پريس سيڪريٽري">
+                <button class="action-btn" onclick="updateBody()">باڊي اپڊيٽ ڪريو</button>
+            </div>
+        </div>
 
-        // خبرون لڳائڻ
-        document.getElementById('btnNews').onclick = () => {
-            push(ref(db, 'announcements'), { title: document.getElementById('nTitle').value, message: document.getElementById('nMsg').value, date: new Date().toLocaleDateString() });
-            alert("خبر جاري ٿي!");
-        };
+        <div id="lib-tab" class="tab-content">
+            <div class="card">
+                <h3><i class="fas fa-book"></i> ڪتاب يا PDF اپلوڊ ڪريو</h3>
+                <input type="text" id="b-title" placeholder="ڪتاب جو نالو">
+                <input type="file" id="b-file" accept=".pdf">
+                <button class="action-btn" onclick="uploadData('library')">لائبرري ۾ سيو ڪريو</button>
+                <div id="st-lib" class="status"></div>
+            </div>
+        </div>
 
-        // ڪتاب لڳائڻ
-        document.getElementById('btnBook').onclick = () => {
-            push(ref(db, 'library'), { title: document.getElementById('bTitle').value, link: document.getElementById('bLink').value });
-            alert("ڪتاب شامل ٿيو!");
-        };
+        <div id="complaints-tab" class="tab-content">
+            <div class="card">
+                <h3><i class="fas fa-inbox"></i> ميمبرن جون شڪايتون</h3>
+                <div id="complaints-view" style="overflow-x:auto;">لوڊ ٿي رهيو آهي...</div>
+            </div>
+        </div>
 
-        // ميمبر ڏيکارڻ ۽ ڊليٽ ڪرڻ
-        onValue(ref(db, 'members'), (snapshot) => {
-            const list = document.getElementById('memberList');
-            list.innerHTML = "";
-            snapshot.forEach((child) => {
-                list.innerHTML += `<tr><td>${child.val().fullName}</td><td>${child.val().whatsapp}</td><td><button class="del-btn" onclick="del('${child.key}')">ڊليٽ</button></td></tr>`;
-            });
-        });
+        <p style="text-align: center;"><a href="index.html" style="color: var(--red); text-decoration: none;">← واپس ويب سائيٽ تي وڃو</a></p>
+    </div>
 
-        window.del = (key) => { if(confirm("ڊليٽ ڪجي؟")) remove(ref(db, 'members/' + key)); };
+    <script>
+        const PASSCODE = "jssf786";
+        const SB_URL = "https://dphtkbzfgiaxghommegd.supabase.co";
+        const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRwaHRrYnpmZ2lheGdob21tZWdkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTA2MjMsImV4cCI6MjA5MDk4NjYyM30.GPHVERT8PzCwggjkwAQOLgYoSioSmSY0y8g3ZcrPHAU";
+        const _client = supabase.createClient(SB_URL, SB_KEY);
+
+        function verifyAccess() {
+            if(document.getElementById('pass-input').value === PASSCODE) document.getElementById('lock-screen').style.display = "none";
+            else alert("غلط پاس ڪوڊ!");
+        }
+
+        function showTab(id, btn) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active-tab'));
+            document.querySelectorAll('.admin-nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active-tab');
+            btn.classList.add('active');
+            if(id === 'complaints-tab') fetchComplaints();
+        }
+
+        async function uploadData(type) {
+            let file, title, msg = "", table, stId;
+            if(type === 'news') {
+                file = document.getElementById('n-file').files[0];
+                title = document.getElementById('n-title').value;
+                msg = document.getElementById('n-msg').value;
+                table = 'announcements'; stId = 'st-news';
+            } else {
+                file = document.getElementById('b-file').files[0];
+                title = document.getElementById('b-title').value;
+                table = 'library'; stId = 'st-lib';
+            }
+
+            if(!file || !title) return alert("ڊيٽا مڪمل ڪريو!");
+            const status = document.getElementById(stId);
+            status.innerHTML = "اپلوڊ ٿي رهيو آهي...";
+
+            const path = `${type}/${Date.now()}_${file.name}`;
+            await _client.storage.from('jssf-media').upload(path, file);
+            const { data: urlData } = _client.storage.from('jssf-media').getPublicUrl(path);
+            
+            let payload = { title };
+            if(type === 'library') payload.link = urlData.publicUrl;
+            else { payload.image_url = urlData.publicUrl; payload.message = msg; }
+
+            const { error } = await _client.from(table).insert([payload]);
+            if(!error) {
+                status.innerHTML = "ڪامياب! واٽس اپ کوليو پيو وڃي...";
+                let waText = `*JSSF نئون پڌرنامو*%0A📌 *${title}*%0Aهتي پڙهو: ${window.location.origin}/index.html`;
+                setTimeout(() => {
+                    if(confirm("واٽس اپ تي شيئر ڪيو؟")) window.open(`https://wa.me/?text=${waText}`, '_blank');
+                    location.reload();
+                }, 1000);
+            }
+        }
+
+        async function updateBody() {
+            const names = [1,2,3,4,5,6,7].map(i => document.getElementById(`pos${i}`).value);
+            const { error } = await _client.from('settings').upsert({ id: 1, body_names: names });
+            if(!error) alert("باڊي اپڊيٽ ٿي وئي!");
+        }
+
+        async function fetchComplaints() {
+            const { data } = await _client.from('complaints').select('*').order('created_at', {ascending: false});
+            let html = `<table><tr><th>نالو</th><th>نمبر</th><th>شڪايت</th></tr>`;
+            data.forEach(c => { html += `<tr><td>${c.full_name}</td><td>${c.phone}</td><td>${c.message}</td></tr>`; });
+            document.getElementById('complaints-view').innerHTML = html + `</table>`;
+        }
     </script>
 </body>
 </html>
-
