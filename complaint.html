@@ -4,91 +4,132 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JSSF Complaint Box - شڪايت باڪس</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Lateef&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
-        :root { --red: #d32f2f; --dark: #1a1a1a; }
-        body { font-family: 'Lateef', cursive; background: #f0f2f5; margin: 0; padding: 20px; font-size: 22px; }
-        .container { max-width: 500px; margin: auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-top: 6px solid var(--red); }
-        h2 { color: var(--red); text-align: center; margin-bottom: 20px; font-size: 32px; }
-        p { text-align: center; color: #555; margin-bottom: 20px; line-height: 1.4; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: var(--dark); }
-        input, textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Lateef'; font-size: 20px; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; background: var(--red); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 24px; font-weight: bold; transition: 0.3s; }
-        button:hover { background: var(--dark); }
-        .back-link { display: block; text-align: center; margin-top: 20px; text-decoration: none; color: var(--red); font-size: 18px; }
-        #status-msg { text-align: center; margin-top: 15px; font-weight: bold; }
+        :root { --blue: #0d2a4a; --red: #d32f2f; --bg: #f4f7f6; }
+        body { font-family: 'Lateef', cursive; background: var(--bg); margin: 0; padding: 0; font-size: 22px; }
+
+        .header { background: var(--blue); color: white; padding: 25px; text-align: center; position: relative; }
+        .back-btn { position: absolute; right: 15px; top: 25px; color: white; text-decoration: none; font-size: 24px; }
+
+        .container { padding: 20px; max-width: 500px; margin: auto; }
+        
+        .form-card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--blue); }
+        
+        input, textarea { 
+            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; 
+            font-family: 'Lateef', cursive; font-size: 20px; box-sizing: border-box; outline: none;
+        }
+        input:focus, textarea:focus { border-color: var(--red); box-shadow: 0 0 5px rgba(211, 47, 47, 0.2); }
+
+        .submit-btn { 
+            background: #222; color: white; width: 100%; padding: 15px; border: none; 
+            border-radius: 10px; font-size: 24px; cursor: pointer; font-family: 'Lateef', cursive;
+            transition: 0.3s;
+        }
+        .submit-btn:active { transform: scale(0.98); }
+
+        #status-msg { margin-top: 20px; text-align: center; font-weight: bold; padding: 10px; border-radius: 8px; display: none; }
+        .error { color: #d32f2f; background: #ffebee; }
+        .success { color: #2e7d32; background: #e8f5e9; }
+
+        .back-home { display: block; text-align: center; margin-top: 25px; color: var(--red); text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
 
+    <div class="header">
+        <a href="index.html" class="back-btn"><i class="fas fa-arrow-right"></i></a>
+        <h2>شڪايت باڪس</h2>
+    </div>
+
     <div class="container">
-        <h2><i class="fas fa-box-open"></i> مرڪز کي شڪايت موڪليو</h2>
-        <p>توهان جي شڪايت سڌو مرڪزي قيادت تائين پهچندي. مهرباني ڪري پنهنجو صحيح رڪارڊ داخل ڪريو.</p>
+        <div class="form-card">
+            <form id="complaintForm">
+                <div class="form-group">
+                    <label>توهان جو نالو:</label>
+                    <input type="text" id="user_name" placeholder="پنهنجو نالو لکو..." required>
+                </div>
 
-        <label>پورو نالو:</label>
-        <input type="text" id="user-name" placeholder="پنهنجو نالو لکو...">
+                <div class="form-group">
+                    <label>فون يا واٽس اپ نمبر:</label>
+                    <input type="number" id="phone" placeholder="03XXXXXXXXX" required>
+                </div>
 
-        <label>فون يا واٽس اپ نمبر:</label>
-        <input type="number" id="user-phone" placeholder="03xxxxxxxxx">
+                <div class="form-group">
+                    <label>يونٽ / شهر:</label>
+                    <input type="text" id="unit" placeholder="مثال: لاکاروڊ، دادو" required>
+                </div>
 
-        <label>يونٽ / شهر:</label>
-        <input type="text" id="user-unit" placeholder="پنهنجو يونٽ لکو...">
+                <div class="form-group">
+                    <label>شڪايت جو تفصيل:</label>
+                    <textarea id="message" rows="5" placeholder="هتي پنهنجي شڪايت لکو..." required></textarea>
+                </div>
 
-        <label>شڪايت جو تفصيل:</label>
-        <textarea id="user-msg" rows="5" placeholder="هتي پنهنجو مسئلو يا شڪايت لکو..."></textarea>
+                <button type="submit" class="submit-btn" id="btnText">شڪايت جمع ڪريو</button>
+            </form>
+            
+            <div id="status-msg"></div>
+        </div>
 
-        <button onclick="sendComplaint()">شڪايت جمع ڪريو</button>
-        
-        <div id="status-msg"></div>
-
-        <a href="index.html" class="back-link"><i class="fas fa-arrow-right"></i> واپس مکيه صفحي تي وڃو</a>
+        <a href="index.html" class="back-home"><i class="fas fa-home"></i> واپس مکيه صفحي تي وڃو</a>
     </div>
 
     <script>
+        // Supabase Configuration
         const SB_URL = "https://dphtkbzfgiaxghommegd.supabase.co";
         const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRwaHRrYnpmZ2lheGdob21tZWdkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTA2MjMsImV4cCI6MjA5MDk4NjYyM30.GPHVERT8PzCwggjkwAQOLgYoSioSmSY0y8g3ZcrPHAU";
         const _client = supabase.createClient(SB_URL, SB_KEY);
 
-        async function sendComplaint() {
-            const name = document.getElementById('user-name').value;
-            const phone = document.getElementById('user-phone').value;
-            const unit = document.getElementById('user-unit').value;
-            const msg = document.getElementById('user-msg').value;
-            const status = document.getElementById('status-msg');
+        const form = document.getElementById('complaintForm');
+        const statusMsg = document.getElementById('status-msg');
 
-            if(!name || !phone || !msg) {
-                status.style.color = "red";
-                status.innerText = "مهرباني ڪري پنهنجو نالو، نمبر ۽ شڪايت لکو!";
-                return;
-            }
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnText');
+            
+            // Disable button and show loading
+            btn.disabled = true;
+            btn.innerText = "موڪلي رهيو آهي...";
+            statusMsg.style.display = "none";
 
-            status.style.color = "blue";
-            status.innerText = "موڪلي رهيو آهي...";
+            // Get form data
+            const formData = {
+                user_name: document.getElementById('user_name').value,
+                phone: document.getElementById('phone').value,
+                unit: document.getElementById('unit').value,
+                message: document.getElementById('message').value // اسڪرين شاٽ ۾ هي غلطي هئي، هاڻي صحيح آهي
+            };
 
             try {
-                const { error } = await _client
-                    .from('complaints')
-                    .insert([{ full_name: name, phone: phone, unit: unit, message: msg }]);
+                // Insert into Supabase 'complaints' table
+                const { error } = await _client.from('complaints').insert([formData]);
 
-                if(error) throw error;
+                if (error) throw error;
 
-                status.style.color = "green";
-                status.innerText = "توهان جي شڪايت ڪاميابيءَ سان جمع ٿي وئي آهي!";
-                
-                // فارم خالي ڪرڻ
-                document.getElementById('user-name').value = "";
-                document.getElementById('user-phone').value = "";
-                document.getElementById('user-unit').value = "";
-                document.getElementById('user-msg').value = "";
+                // Success
+                statusMsg.className = "success";
+                statusMsg.innerHTML = "<i class='fas fa-check-circle'></i> توهان جي شڪايت ڪاميابي سان جمع ٿي وئي.";
+                statusMsg.style.display = "block";
+                form.reset();
 
             } catch (err) {
-                status.style.color = "red";
-                status.innerText = "غلطي: " + err.message;
+                // Error handling based on your screenshot
+                statusMsg.className = "error";
+                statusMsg.innerHTML = "<i class='fas fa-exclamation-triangle'></i> غلطي: " + err.message;
+                statusMsg.style.display = "block";
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "شڪايت جمع ڪريو";
             }
-        }
+        });
     </script>
-    <link rel="manifest" href="manifest.json">
 </body>
 </html>
