@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="sd" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSSF Central Body - مرڪزي باڊي</title>
+    
+    <link rel="manifest" href="manifest.json">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Lateef&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root { --red: #d32f2f; --dark: #1a1a1a; }
+        body { 
+            font-family: 'Lateef', cursive; 
+            background: #f4f4f4; 
+            margin: 0; 
+            padding-bottom: 50px; 
+            font-size: 24px; 
+            text-align: center;
+        }
+        .header { 
+            background: var(--red); 
+            color: white; 
+            padding: 30px 10px; 
+            margin-bottom: 30px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .container { max-width: 600px; margin: auto; padding: 0 15px; }
+        
+        /* عهديدار ڪارڊ */
+        .member-card { 
+            background: white; 
+            margin-bottom: 15px; 
+            padding: 20px; 
+            border-radius: 12px; 
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1); 
+            border-right: 8px solid var(--red);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.3s;
+        }
+        .member-card:hover { transform: scale(1.02); }
+        
+        .post-title { color: var(--red); font-weight: bold; font-size: 26px; }
+        .member-name { color: var(--dark); font-weight: 500; }
+
+        .loading { color: #888; padding: 50px; font-size: 22px; }
+        .back-link { 
+            display: inline-block; 
+            margin-top: 30px; 
+            text-decoration: none; 
+            color: var(--red); 
+            font-weight: bold; 
+            border-bottom: 2px solid var(--red);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>مرڪزي باڊي</h1>
+        <p>جيئي سنڌ اسٽوڊنٽس فيڊريشن (جساف)</p>
+    </div>
+
+    <div class="container">
+        <div id="body-list">
+            <div class="loading"><i class="fas fa-spinner fa-spin"></i> لوڊ ٿي رهيو آهي...</div>
+        </div>
+
+        <a href="index.html" class="back-link"><i class="fas fa-arrow-right"></i> واپس مکيه صفحي تي وڃو</a>
+    </div>
+
+    <script>
+        const SB_URL = "https://dphtkbzfgiaxghommegd.supabase.co";
+        const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRwaHRrYnpmZ2lheGdob21tZWdkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTA2MjMsImV4cCI6MjA5MDk4NjYyM30.GPHVERT8PzCwggjkwAQOLgYoSioSmSY0y8g3ZcrPHAU";
+        const _client = supabase.createClient(SB_URL, SB_KEY);
+
+        const posts = ["صدر", "نائب صدر", "جنرل سيڪريٽري", "تعليم سيڪريٽري", "جوئٽ سيڪريٽري", "مالياتي سيڪريٽري", "پريس سيڪريٽري"];
+
+        async function fetchBody() {
+            const listDiv = document.getElementById('body-list');
+
+            try {
+                // Settings ٽيبل مان باڊي جا نالا کڻڻ
+                const { data, error } = await _client
+                    .from('settings')
+                    .select('body_names')
+                    .eq('id', 1)
+                    .single();
+
+                if (error) throw error;
+
+                if (data && data.body_names) {
+                    let names = data.body_names;
+                    
+                    // جيڪڏهن ڊيٽا String صورت ۾ آهي ته ان کي Array ۾ مٽايو
+                    if (typeof names === 'string') {
+                        names = JSON.parse(names);
+                    }
+
+                    listDiv.innerHTML = ""; // پراڻي لوڊنگ هٽايو
+                    
+                    names.forEach((name, index) => {
+                        if (name && name.trim() !== "") {
+                            listDiv.innerHTML += `
+                                <div class="member-card">
+                                    <span class="post-title">${posts[index]}</span>
+                                    <span class="member-name">${name}</span>
+                                </div>
+                            `;
+                        }
+                    });
+                } else {
+                    listDiv.innerHTML = "<p>هن وقت باڊي جي ڊيٽا موجود ناهي.</p>";
+                }
+
+            } catch (err) {
+                console.error("Error loading body:", err);
+                listDiv.innerHTML = "<p style='color:red;'>ڊيٽا لوڊ ڪرڻ ۾ غلطي آئي آهي. مهرباني ڪري ايڊمن پينل مان نالا اپڊيٽ ڪريو.</p>";
+            }
+        }
+
+        // پيج لوڊ ٿيڻ تي فنڪشن هلايو
+        fetchBody();
+    </script>
+</body>
+</html>
