@@ -8,38 +8,36 @@
     <link href="https://fonts.googleapis.com/css2?family=Lateef&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --red: #d32f2f; --dark: #1a1a1a; }
-        body { font-family: 'Lateef', cursive; background: #f0f2f5; margin: 0; font-size: 20px; }
+        :root { --red: #d32f2f; --dark: #1a1a1a; --bg: #f0f2f5; }
+        body { font-family: 'Lateef', cursive; background: var(--bg); margin: 0; font-size: 20px; direction: rtl; }
         
-        /* پاسورڊ لاڪ اسڪرين */
+        /* Lock Screen */
         #lock-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--dark); display: flex; align-items: center; justify-content: center; z-index: 10000; }
         .login-box { background: #222; padding: 30px; border-radius: 15px; border: 2px solid var(--red); text-align: center; width: 90%; max-width: 350px; }
 
-        /* نيويگيشن بار */
+        /* Navigation */
         .admin-nav { background: var(--red); padding: 10px; display: flex; overflow-x: auto; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
-        .admin-nav button { background: rgba(255,255,255,0.1); border: 1px solid white; color: white; margin: 0 5px; padding: 8px 15px; border-radius: 5px; font-family: 'Lateef'; cursor: pointer; white-space: nowrap; }
+        .admin-nav button { background: rgba(255,255,255,0.1); border: 1px solid white; color: white; margin: 0 5px; padding: 8px 15px; border-radius: 5px; font-family: 'Lateef'; cursor: pointer; white-space: nowrap; font-size: 18px; }
         .admin-nav button.active { background: white; color: var(--red); font-weight: bold; }
 
         .container { max-width: 800px; margin: 20px auto; padding: 10px; }
         .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 25px; border-right: 6px solid var(--red); }
         
-        h2 { color: var(--red); text-align: center; }
         h3 { margin-top: 0; color: var(--dark); display: flex; align-items: center; gap: 10px; }
+        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; font-family: 'Lateef'; font-size: 20px; box-sizing: border-box; }
         
-        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 8px; font-family: 'Lateef'; font-size: 20px; box-sizing: border-box; }
-        button.action-btn { width: 100%; padding: 15px; background: var(--red); color: white; border: none; border-radius: 8px; font-size: 24px; cursor: pointer; transition: 0.3s; }
+        button.action-btn { width: 100%; padding: 15px; background: var(--red); color: white; border: none; border-radius: 8px; font-size: 24px; cursor: pointer; transition: 0.3s; font-family: 'Lateef'; }
         button.action-btn:hover { background: var(--dark); }
 
-        /* شڪايتن جي ٽيبل */
+        /* Tables */
         table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; font-size: 18px; }
         th, td { border: 1px solid #ddd; padding: 12px; text-align: right; }
         th { background: #f8f8f8; color: var(--red); }
 
-        .tab-content { display: none; animation: fadeIn 0.5s; }
+        .tab-content { display: none; animation: fadeIn 0.4s; }
         .active-tab { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        
-        .status { font-weight: bold; text-align: center; margin-top: 10px; }
+        .status { font-weight: bold; text-align: center; margin-top: 10px; padding: 5px; border-radius: 5px; }
     </style>
 </head>
 <body>
@@ -60,7 +58,6 @@
     </div>
 
     <div class="container">
-        
         <div id="news-tab" class="tab-content active-tab">
             <div class="card">
                 <h3><i class="fas fa-bullhorn"></i> نيوز ۽ پريس رليز موڪليو</h3>
@@ -74,15 +71,16 @@
 
         <div id="body-tab" class="tab-content">
             <div class="card">
-                <h3><i class="fas fa-users-cog"></i> باڊي جا نالا تبديل ڪريو</h3>
-                <input type="text" id="pos1" placeholder="صدر جو نالو">
+                <h3><i class="fas fa-users-cog"></i> مرڪزي باڊي اپڊيٽ (7 عهدا)</h3>
+                <input type="text" id="pos1" placeholder="مرڪزي صدر">
                 <input type="text" id="pos2" placeholder="نائب صدر">
                 <input type="text" id="pos3" placeholder="جنرل سيڪريٽري">
                 <input type="text" id="pos4" placeholder="تعليم سيڪريٽري">
-                <input type="text" id="pos5" placeholder="جوئٽ سيڪريٽري">
+                <input type="text" id="pos5" placeholder="جوائنٽ سيڪريٽري">
                 <input type="text" id="pos6" placeholder="مالياتي سيڪريٽري">
                 <input type="text" id="pos7" placeholder="پريس سيڪريٽري">
                 <button class="action-btn" onclick="updateBody()">باڊي اپڊيٽ ڪريو</button>
+                <div id="st-body" class="status"></div>
             </div>
         </div>
 
@@ -102,8 +100,6 @@
                 <div id="complaints-view" style="overflow-x:auto;">لوڊ ٿي رهيو آهي...</div>
             </div>
         </div>
-
-        <p style="text-align: center;"><a href="index.html" style="color: var(--red); text-decoration: none;">← واپس ويب سائيٽ تي وڃو</a></p>
     </div>
 
     <script>
@@ -113,8 +109,11 @@
         const _client = supabase.createClient(SB_URL, SB_KEY);
 
         function verifyAccess() {
-            if(document.getElementById('pass-input').value === PASSCODE) document.getElementById('lock-screen').style.display = "none";
-            else alert("غلط پاس ڪوڊ!");
+            if(document.getElementById('pass-input').value === PASSCODE) {
+                document.getElementById('lock-screen').style.display = "none";
+            } else {
+                alert("غلط پاس ڪوڊ!");
+            }
         }
 
         function showTab(id, btn) {
@@ -123,6 +122,34 @@
             document.getElementById(id).classList.add('active-tab');
             btn.classList.add('active');
             if(id === 'complaints-tab') fetchComplaints();
+        }
+
+        async function fetchComplaints() {
+            const { data, error } = await _client.from('complaints').select('*').order('created_at', {ascending: false});
+            if(error) { document.getElementById('complaints-view').innerText = "ايرر: " + error.message; return; }
+            
+            let html = `<table><tr><th>نالو</th><th>نمبر</th><th>شڪايت</th></tr>`;
+            data.forEach(c => {
+                // Undefined مسئلو حل ڪرڻ لاءِ user_name استعمال ڪيو ويو آهي
+                html += `<tr><td>${c.user_name || 'نامعلوم'}</td><td>${c.phone}</td><td>${c.message}</td></tr>`;
+            });
+            document.getElementById('complaints-view').innerHTML = html + `</table>`;
+        }
+
+        async function updateBody() {
+            const status = document.getElementById('st-body');
+            const names = [1,2,3,4,5,6,7].map(i => document.getElementById(`pos${i}`).value || "---");
+            
+            status.innerHTML = "اپڊيٽ ٿي رهيو آهي...";
+            const { error } = await _client.from('settings').upsert({ id: 1, body_names: names });
+            
+            if(!error) {
+                status.innerHTML = "باڊي ڪاميابيءَ سان اپڊيٽ ٿي وئي!";
+                status.style.color = "green";
+            } else {
+                status.innerHTML = "غلطي: " + error.message;
+                status.style.color = "red";
+            }
         }
 
         async function uploadData(type) {
@@ -138,40 +165,26 @@
                 table = 'library'; stId = 'st-lib';
             }
 
-            if(!file || !title) return alert("ڊيٽا مڪمل ڪريو!");
+            if(!file || !title) return alert("مھرباني ڪري فائل ۽ عنوان ڏيو!");
             const status = document.getElementById(stId);
-            status.innerHTML = "اپلوڊ ٿي رهيو آهي...";
+            status.innerHTML = "اپلوڊنگ جاري آهي...";
 
             const path = `${type}/${Date.now()}_${file.name}`;
-            await _client.storage.from('jssf-media').upload(path, file);
+            const { error: storageErr } = await _client.storage.from('jssf-media').upload(path, file);
+            if(storageErr) { status.innerHTML = "Storage Error: " + storageErr.message; return; }
+
             const { data: urlData } = _client.storage.from('jssf-media').getPublicUrl(path);
-            
             let payload = { title };
             if(type === 'library') payload.link = urlData.publicUrl;
             else { payload.image_url = urlData.publicUrl; payload.message = msg; }
 
             const { error } = await _client.from(table).insert([payload]);
             if(!error) {
-                status.innerHTML = "ڪامياب! واٽس اپ کوليو پيو وڃي...";
-                let waText = `*JSSF نئون پڌرنامو*%0A📌 *${title}*%0Aهتي پڙهو: ${window.location.origin}/index.html`;
-                setTimeout(() => {
-                    if(confirm("واٽس اپ تي شيئر ڪيو؟")) window.open(`https://wa.me/?text=${waText}`, '_blank');
-                    location.reload();
-                }, 1000);
+                status.innerHTML = "ڪاميابي سان شايع ٿي ويو!";
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                status.innerHTML = "ڊيٽابيس غلطي: " + error.message;
             }
-        }
-
-        async function updateBody() {
-            const names = [1,2,3,4,5,6,7].map(i => document.getElementById(`pos${i}`).value);
-            const { error } = await _client.from('settings').upsert({ id: 1, body_names: names });
-            if(!error) alert("باڊي اپڊيٽ ٿي وئي!");
-        }
-
-        async function fetchComplaints() {
-            const { data } = await _client.from('complaints').select('*').order('created_at', {ascending: false});
-            let html = `<table><tr><th>نالو</th><th>نمبر</th><th>شڪايت</th></tr>`;
-            data.forEach(c => { html += `<tr><td>${c.full_name}</td><td>${c.phone}</td><td>${c.message}</td></tr>`; });
-            document.getElementById('complaints-view').innerHTML = html + `</table>`;
         }
     </script>
 </body>
