@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JSSF JSQM - Official Portal</title>
     
+    <title>JSSF JSQM - Official Student Portal</title>
+    <meta name="description" content="جيئي سنڌ اسٽوڊنٽس فيڊريشن (JSSF) ۽ JSQM جو سرڪاري پورٽل.">
+    <meta name="keywords" content="JSSF, JSQM, Student Portal, Sindh">
+
     <link rel="manifest" href="manifest.json">
-    
     <link href="https://fonts.googleapis.com/css2?family=Lateef&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
@@ -18,53 +19,37 @@
 
         /* هيڊر اسٽائل */
         .header { background: var(--blue); padding: 40px 15px 75px; text-align: center; color: white; position: relative; }
-        .logo-container { width: 95px; height: 95px; background: white; border-radius: 50%; margin: 0 auto 10px; padding: 5px; border: 3px solid var(--red); box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
-        .logo-container img { width: 100%; border-radius: 50%; height: 100%; object-fit: cover; }
-        .header h2 { margin: 10px 0 0; font-size: 30px; font-weight: normal; }
+        .logo-container { width: 95px; height: 95px; background: white; border-radius: 50%; margin: 0 auto 10px; padding: 5px; border: 3px solid var(--red); box-shadow: 0 4px 15px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .logo-container img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+        .header h1 { margin: 10px 0 0; font-size: 30px; font-weight: normal; }
 
         .search-icon { position: absolute; left: 20px; top: 45px; font-size: 22px; cursor: pointer; opacity: 0.8; }
         .menu-icon { position: absolute; right: 20px; top: 45px; font-size: 24px; cursor: pointer; z-index: 2001; }
 
-        /* ٿري ڊاٽ مينيو */
-        #dropdown-menu { display: none; position: absolute; right: 20px; top: 85px; background: white; color: black; border-radius: 12px; box-shadow: 0 5px 25px rgba(0,0,0,0.2); width: 170px; z-index: 2000; text-align: right; border: 1px solid #eee; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from {opacity: 0; transform: translateY(-10px);} to {opacity: 1; transform: translateY(0);} }
-        #dropdown-menu a { display: block; padding: 12px 15px; text-decoration: none; color: #333; border-bottom: 1px solid #f4f4f4; font-size: 19px; }
-        #dropdown-menu a:hover { background: #f8f8f8; color: var(--red); }
+        /* مينيو */
+        #dropdown-menu { display: none; position: absolute; right: 20px; top: 85px; background: white; color: black; border-radius: 12px; box-shadow: 0 5px 25px rgba(0,0,0,0.2); width: 170px; z-index: 2000; text-align: right; border: 1px solid #eee; }
+        #dropdown-menu a { display: block; padding: 12px 15px; text-decoration: none; color: #333; border-bottom: 1px solid #f4f4f4; }
 
-        /* مينيو ڪارڊز گريڊ */
+        /* گريڊ */
         .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 0 15px; margin-top: -45px; position: relative; z-index: 10; }
-        .menu-item { background: white; border-radius: 15px; padding: 25px 5px; text-align: center; text-decoration: none; color: var(--blue); box-shadow: 0 8px 20px rgba(0,0,0,0.06); transition: 0.3s; }
+        .menu-item { background: white; border-radius: 15px; padding: 25px 5px; text-align: center; text-decoration: none; color: var(--blue); box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
         .menu-item i { font-size: 32px; color: var(--red); margin-bottom: 12px; display: block; }
-        .menu-item span { font-weight: bold; font-size: 22px; }
-        .menu-item:active { transform: scale(0.95); }
+        .menu-item span { font-weight: bold; }
 
-        /* پڌرائيون سيڪشن */
+        /* پڌرائيون */
         .section-header { padding: 30px 20px 10px; display: flex; justify-content: space-between; align-items: center; }
         .section-header h3 { border-right: 5px solid var(--red); padding-right: 12px; font-size: 26px; color: var(--blue); margin: 0; }
-        .see-all { color: var(--red); text-decoration: none; font-size: 18px; font-weight: bold; }
-
         .news-container { padding: 0 15px 20px; }
-        .news-card { background: white; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.04); border-right: 7px solid var(--red); padding: 20px; position: relative; }
-        .news-badge { background: #fff1f1; color: var(--red); padding: 2px 10px; border-radius: 5px; font-size: 16px; font-weight: bold; float: left; }
-        .news-date { color: #999; font-size: 17px; display: block; margin-bottom: 10px; }
-        .news-title { font-size: 22px; color: var(--blue); line-height: 1.5; margin: 15px 0; font-weight: bold; text-align: justify; clear: both; }
-        .read-more { color: var(--red); text-decoration: none; font-weight: bold; font-size: 19px; }
+        .news-card { background: white; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.04); border-right: 7px solid var(--red); padding: 20px; }
 
-        /* سوشل ميڊيا سيڪشن */
-        .social-section { text-align: center; padding: 25px 15px; background: white; margin: 20px 15px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .social-section h4 { margin: 0 0 15px; color: var(--blue); font-size: 22px; }
-        .social-links { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
-        .social-btn { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; font-size: 20px; transition: 0.3s; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        .facebook { background: #1877F2; }
-        .instagram { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
-        .youtube { background: #FF0000; }
-        .whatsapp { background: #25D366; }
-        .social-btn:hover { transform: translateY(-5px); box-shadow: 0 6px 15px rgba(0,0,0,0.2); }
+        /* سوشل ميڊيا */
+        .social-section { text-align: center; padding: 25px 15px; background: white; margin: 20px 15px; border-radius: 15px; }
+        .social-links { display: flex; justify-content: center; gap: 12px; }
+        .social-btn { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; }
+        .facebook { background: #1877F2; } .instagram { background: #E4405F; } .youtube { background: #FF0000; } .whatsapp { background: #25D366; }
 
-        /* فلوٽنگ بٽڻ */
-        .admin-fab { position: fixed; bottom: 25px; left: 25px; width: 60px; height: 60px; background: var(--blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 8px 20px rgba(13, 42, 74, 0.4); text-decoration: none; z-index: 1000; }
-
-        .dev-tag { text-align: center; color: #bbb; font-size: 14px; padding: 20px 0 100px; text-transform: uppercase; letter-spacing: 1px; }
+        .dev-tag { text-align: center; color: #bbb; font-size: 14px; padding: 20px 0 100px; }
+        .admin-fab { position: fixed; bottom: 25px; left: 25px; width: 60px; height: 60px; background: var(--blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
     </style>
 </head>
 <body>
@@ -72,15 +57,15 @@
     <div class="header">
         <i class="fas fa-search search-icon"></i>
         <div class="logo-container">
-            <img src="https://dphtkbzfgiaxghommegd.supabase.co/storage/v1/object/public/jssf-media/logo.png" alt="JSSF Logo">
+            <img src="logo.png" alt="JSSF JSQM Logo">
         </div>
-        <h2>جيئي سنڌ اسٽوڊنٽس فيڊريشن</h2>
+        <h1>جيئي سنڌ اسٽوڊنٽس فيڊريشن</h1>
         <i class="fas fa-ellipsis-v menu-icon" onclick="toggleMenu(event)"></i>
         
         <div id="dropdown-menu">
-            <a href="about.html"><i class="fas fa-info-circle"></i> اسان بابت</a>
-            <a href="contact.html"><i class="fas fa-phone"></i> رابطو ڪريو</a>
-            <a href="admin.html"><i class="fas fa-lock"></i> ايڊمن لاگ ان</a>
+            <a href="about.html">اسان بابت</a>
+            <a href="contact.html">رابطو ڪريو</a>
+            <a href="admin.html">ايڊمن لاگ ان</a>
         </div>
     </div>
 
@@ -95,36 +80,32 @@
 
     <div class="section-header">
         <h3>تازيون پڌرائيون</h3>
-        <a href="all-news.html" class="see-all">سڀ ڏسو</a>
+        <a href="all-news.html" style="color:var(--red); text-decoration:none;">سڀ ڏسو</a>
     </div>
 
     <div class="news-container" id="news-list">
-        <div style="text-align:center; padding:30px; color:gray;">لوڊ ٿي رهيو آهي...</div>
+        <div style="text-align:center; padding:30px;">لوڊ ٿي رهيو آهي...</div>
     </div>
 
     <div class="social-section">
         <h4>اسان سان جڙيل رهو</h4>
         <div class="social-links">
-            <a href="https://www.facebook.com/share/18pBiWBsx7/" target="_blank" class="social-btn facebook"><i class="fab fa-facebook-f"></i></a>
-            <a href="https://www.instagram.com/jssf_media_cell?igsh=ZzdkN3Flb240dGdj" target="_blank" class="social-btn instagram"><i class="fab fa-instagram"></i></a>
-            <a href="https://youtube.com/@jssfariser?si=WneQzGnXRpj5yk-e" target="_blank" class="social-btn youtube"><i class="fab fa-youtube"></i></a>
-            <a href="https://wa.me/923000000000" target="_blank" class="social-btn whatsapp"><i class="fab fa-whatsapp"></i></a>
+            <a href="#" class="social-btn facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="social-btn instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="social-btn youtube"><i class="fab fa-youtube"></i></a>
+            <a href="#" class="social-btn whatsapp"><i class="fab fa-whatsapp"></i></a>
         </div>
     </div>
 
-    <div class="dev-tag">DEVELOPED BY MEHTAB KHAN | V2.7</div>
+    <div class="dev-tag">DEVELOPED BY MEHTAB KHAN</div>
 
-    <a href="admin.html" class="admin-fab">
-        <i class="fas fa-user-shield"></i>
-    </a>
+    <a href="admin.html" class="admin-fab"><i class="fas fa-user-shield"></i></a>
 
     <script>
-        // Supabase Setup
         const SB_URL = "https://dphtkbzfgiaxghommegd.supabase.co";
-        const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRwaHRrYnpmZ2lheGdob21tZWdkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTA2MjMsImV4cCI6MjA5MDk4NjYyM30.GPHVERT8PzCwggjkwAQOLgYoSioSmSY0y8g3ZcrPHAU";
+        const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."; // توهان جي ڪي
         const _client = supabase.createClient(SB_URL, SB_KEY);
 
-        // Menu Toggle
         function toggleMenu(e) {
             e.stopPropagation();
             const m = document.getElementById('dropdown-menu');
@@ -132,30 +113,14 @@
         }
         window.onclick = () => document.getElementById('dropdown-menu').style.display = 'none';
 
-        // Load Announcements
         async function loadNews() {
             const list = document.getElementById('news-list');
-            try {
-                const { data, error } = await _client.from('announcements').select('*').order('created_at', {ascending: false}).limit(5);
-                if(error) throw error;
-                if(data && data.length > 0) {
-                    list.innerHTML = "";
-                    data.forEach(item => {
-                        const d = new Date(item.created_at).toLocaleDateString('sd-PK', {year:'numeric', month:'long', day:'numeric'});
-                        list.innerHTML += `
-                            <div class="news-card">
-                                <span class="news-badge">پڌرائي</span>
-                                <span class="news-date">${d}</span>
-                                <div class="news-title">${item.title}</div>
-                                <a href="news-detail.html?id=${item.id}" class="read-more">وڌيڪ پڙهو...</a>
-                            </div>
-                        `;
-                    });
-                } else {
-                    list.innerHTML = "<p style='text-align:center;'>ڪا به پڌرائي موجود ناهي.</p>";
-                }
-            } catch (err) {
-                list.innerHTML = "<p style='text-align:center; color:red;'>ڊيٽا لوڊ ڪرڻ ۾ مسئلو آيو.</p>";
+            const { data, error } = await _client.from('announcements').select('*').limit(5);
+            if(data) {
+                list.innerHTML = "";
+                data.forEach(item => {
+                    list.innerHTML += `<div class="news-card"><div class="news-title">${item.title}</div></div>`;
+                });
             }
         }
         loadNews();
