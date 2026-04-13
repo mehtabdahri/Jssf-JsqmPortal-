@@ -3,107 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <title>JSSF JSQM - Official Student Portal</title>
-    <meta name="description" content="جيئي سنڌ اسٽوڊنٽس فيڊريشن (JSSF) ۽ JSQM جو سرڪاري پورٽل.">
-    <meta name="keywords" content="JSSF, JSQM, Student Portal, Sindh">
-
-    <link rel="manifest" href="manifest.json">
+    
     <link href="https://fonts.googleapis.com/css2?family=Lateef&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
-        :root { --blue: #0d2a4a; --red: #d32f2f; --bg: #f4f7f6; }
-        body { font-family: 'Lateef', cursive; background: var(--bg); margin: 0; padding: 0; font-size: 20px; color: #333; overflow-x: hidden; }
+        :root { --blue: #0d2a4a; --red: #d32f2f; --bg: #f4f7f6; --white: #ffffff; }
+        body { font-family: 'Lateef', cursive; background: var(--bg); margin: 0; padding: 0; font-size: 22px; color: #333; overflow-x: hidden; }
 
-        /* هيڊر اسٽائل */
-        .header { background: var(--blue); padding: 40px 15px 75px; text-align: center; color: white; position: relative; }
-        .logo-container { width: 95px; height: 95px; background: white; border-radius: 50%; margin: 0 auto 10px; padding: 5px; border: 3px solid var(--red); box-shadow: 0 4px 15px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .logo-container img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-        .header h1 { margin: 10px 0 0; font-size: 30px; font-weight: normal; }
+        /* هيڊر ۽ گول لوگو */
+        .header { background: var(--blue); padding: 30px 15px 85px; text-align: center; color: white; border-bottom: 6px solid var(--red); position: relative; }
+        .logo-wrapper { 
+            width: 100px; height: 100px; background: white; border-radius: 50%; 
+            margin: 0 auto 15px; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4), 0 0 10px rgba(0,0,0,0.5);
+            border: 3px solid var(--red); overflow: hidden;
+        }
+        .logo-img { width: 85%; height: auto; border-radius: 50%; }
+        .header h1 { margin: 0; font-size: 38px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
 
-        .search-icon { position: absolute; left: 20px; top: 45px; font-size: 22px; cursor: pointer; opacity: 0.8; }
-        .menu-icon { position: absolute; right: 20px; top: 45px; font-size: 24px; cursor: pointer; z-index: 2001; }
+        /* مينيو بٽڻ */
+        .menu-btn { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 18px; z-index: 1001; }
+        .dropdown { display: none; position: absolute; top: 70px; right: 20px; background: white; width: 240px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.25); z-index: 1000; overflow: hidden; border: 1px solid #ddd; }
+        .dropdown a { display: block; padding: 14px 20px; text-decoration: none; color: var(--blue); border-bottom: 1px solid #eee; transition: 0.3s; text-align: right; font-size: 20px; }
+        .dropdown a:hover { background: #f8f9fa; color: var(--red); padding-right: 30px; }
+        
+        /* ايڊمن بٽڻ لاءِ خاص اسٽائل */
+        .admin-link { border-top: 2px solid #eee; color: var(--red) !important; font-weight: bold; }
 
-        /* مينيو */
-        #dropdown-menu { display: none; position: absolute; right: 20px; top: 85px; background: white; color: black; border-radius: 12px; box-shadow: 0 5px 25px rgba(0,0,0,0.2); width: 170px; z-index: 2000; text-align: right; border: 1px solid #eee; }
-        #dropdown-menu a { display: block; padding: 12px 15px; text-decoration: none; color: #333; border-bottom: 1px solid #f4f4f4; }
+        /* نيويگيشن گريڊ */
+        .nav-grid { 
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; 
+            max-width: 900px; margin: -45px auto 30px; padding: 0 10px; position: relative; z-index: 10; 
+        }
+        .nav-item { 
+            background: white; padding: 15px 5px; border-radius: 12px; text-align: center; 
+            text-decoration: none; color: var(--blue); box-shadow: 0 8px 20px rgba(0,0,0,0.1); 
+            border-bottom: 4px solid var(--red); transition: 0.3s; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .nav-item:hover { transform: translateY(-5px); background: #fffdfd; }
+        .nav-item i { font-size: 24px; color: var(--red); margin-bottom: 5px; }
+        .nav-item span { font-weight: bold; font-size: 16px; line-height: 1.2; }
 
-        /* گريڊ */
-        .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 0 15px; margin-top: -45px; position: relative; z-index: 10; }
-        .menu-item { background: white; border-radius: 15px; padding: 25px 5px; text-align: center; text-decoration: none; color: var(--blue); box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
-        .menu-item i { font-size: 32px; color: var(--red); margin-bottom: 12px; display: block; }
-        .menu-item span { font-weight: bold; }
+        /* نيوز سيڪشن */
+        .section-title { text-align: center; margin: 40px 0 20px; font-size: 30px; color: var(--blue); font-weight: bold; }
+        .section-title::after { content: ''; display: block; width: 50px; height: 3px; background: var(--red); margin: 5px auto; }
 
-        /* پڌرائيون */
-        .section-header { padding: 30px 20px 10px; display: flex; justify-content: space-between; align-items: center; }
-        .section-header h3 { border-right: 5px solid var(--red); padding-right: 12px; font-size: 26px; color: var(--blue); margin: 0; }
-        .news-container { padding: 0 15px 20px; }
-        .news-card { background: white; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.04); border-right: 7px solid var(--red); padding: 20px; }
+        .news-container { max-width: 800px; margin: auto; padding: 0 15px; display: flex; flex-direction: column; gap: 25px; }
+        .news-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.06); border: 1px solid #eee; }
+        .news-img { width: 100%; max-height: 450px; object-fit: cover; background: #fafafa; }
+        .news-content { padding: 20px; }
+        .news-title { font-size: 26px; font-weight: bold; color: var(--blue); margin-bottom: 10px; }
+        .news-msg { font-size: 19px; color: #444; line-height: 1.6; white-space: pre-wrap; }
 
-        /* سوشل ميڊيا */
-        .social-section { text-align: center; padding: 25px 15px; background: white; margin: 20px 15px; border-radius: 15px; }
-        .social-links { display: flex; justify-content: center; gap: 12px; }
-        .social-btn { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; }
-        .facebook { background: #1877F2; } .instagram { background: #E4405F; } .youtube { background: #FF0000; } .whatsapp { background: #25D366; }
+        /* فوٽر */
+        .footer { background: var(--blue); color: white; padding: 40px 20px; text-align: center; margin-top: 50px; border-top: 5px solid var(--red); }
+        .social-links { display: flex; justify-content: center; gap: 12px; margin: 20px 0; flex-wrap: wrap; }
+        .social-btn { width: 45px; height: 45px; background: rgba(255,255,255,0.1); color: white; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none; font-size: 20px; transition: 0.3s; border: 1px solid rgba(255,255,255,0.2); }
+        .social-btn:hover { background: var(--red); transform: scale(1.1); }
+        
+        .dev-name { font-size: 14px; opacity: 0.5; margin-top: 25px; text-transform: uppercase; letter-spacing: 1px; }
 
-        .dev-tag { text-align: center; color: #bbb; font-size: 14px; padding: 20px 0 100px; }
-        .admin-fab { position: fixed; bottom: 25px; left: 25px; width: 60px; height: 60px; background: var(--blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+        @media (max-width: 600px) {
+            .nav-grid { gap: 5px; padding: 0 5px; }
+            .nav-item { padding: 10px 2px; }
+            .nav-item i { font-size: 20px; }
+            .nav-item span { font-size: 13px; }
+            .header h1 { font-size: 28px; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <i class="fas fa-search search-icon"></i>
-        <div class="logo-container">
-            <img src="logo.png" alt="JSSF JSQM Logo">
+    <header class="header">
+        <button class="menu-btn" onclick="toggleMenu(event)"><i class="fas fa-bars"></i> مينيو</button>
+        <div id="dropdown-menu" class="dropdown">
+            <a href="body.html"><i class="fas fa-users"></i> مرڪزي باڊي</a>
+            <a href="complaint.html"><i class="fas fa-envelope-open-text"></i> شڪايت باڪس</a>
+            <a href="manifesto.html"><i class="fas fa-scroll"></i> منشور ۽ حلف</a>
+            <a href="library.html"><i class="fas fa-book-open"></i> ڊجيٽل لائبرري</a>
+            <a href="gallery.html"><i class="fas fa-images"></i> فوٽو گيلري</a>
+            <a href="contact.html"><i class="fas fa-phone-alt"></i> رابطو ڪريو</a>
+            <a href="admin.html" class="admin-link"><i class="fas fa-user-shield"></i> ايڊمن پينل</a>
+        </div>
+        <div class="logo-wrapper">
+            <img src="logo.png" alt="JSSF Logo" class="logo-img">
         </div>
         <h1>جيئي سنڌ اسٽوڊنٽس فيڊريشن</h1>
-        <i class="fas fa-ellipsis-v menu-icon" onclick="toggleMenu(event)"></i>
-        
-        <div id="dropdown-menu">
-            <a href="about.html">اسان بابت</a>
-            <a href="contact.html">رابطو ڪريو</a>
-            <a href="admin.html">ايڊمن لاگ ان</a>
-        </div>
+        <p>مرڪزي پورٽل - JSSF</p>
+    </header>
+
+    <div class="nav-grid">
+        <a href="membership.html" class="nav-item"><i class="fas fa-user-plus"></i><span>ميمبرشپ</span></a>
+        <a href="manifesto.html" class="nav-item"><i class="fas fa-balance-scale"></i><span>جساف جو آئين</span></a>
+        <a href="gallery.html" class="nav-item"><i class="fas fa-images"></i><span>فوٽو گيلري</span></a>
+        <a href="manifesto.html" class="nav-item"><i class="fas fa-hand-paper"></i><span>منشور ۽ حلف</span></a>
     </div>
 
-    <div class="menu-grid">
-        <a href="body.html" class="menu-item"><i class="fas fa-users"></i><span>باڊي</span></a>
-        <a href="gallery.html" class="menu-item"><i class="fas fa-images"></i><span>گيلري</span></a>
-        <a href="library.html" class="menu-item"><i class="fas fa-book-open"></i><span>لائبرري</span></a>
-        <a href="complaint.html" class="menu-item"><i class="fas fa-comment-dots"></i><span>شڪايت</span></a>
-        <a href="membership.html" class="menu-item"><i class="fas fa-user-plus"></i><span>ميمبرشپ</span></a>
-        <a href="manifesto.html" class="menu-item"><i class="fas fa-file-alt"></i><span>منشور</span></a>
+    <div class="section-title">تازيون خبرون ۽ پڌرائيون</div>
+    
+    <div id="news-list" class="news-container">
+        <p style="text-align:center; padding: 40px; color: #666;">ڊيٽا لوڊ ٿي رهي آهي...</p>
     </div>
 
-    <div class="section-header">
-        <h3>تازيون پڌرائيون</h3>
-        <a href="all-news.html" style="color:var(--red); text-decoration:none;">سڀ ڏسو</a>
-    </div>
-
-    <div class="news-container" id="news-list">
-        <div style="text-align:center; padding:30px;">لوڊ ٿي رهيو آهي...</div>
-    </div>
-
-    <div class="social-section">
-        <h4>اسان سان جڙيل رهو</h4>
+    <footer class="footer">
+        <h3>جيئي سنڌ، جيئي سنڌو ديش</h3>
         <div class="social-links">
-            <a href="#" class="social-btn facebook"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" class="social-btn instagram"><i class="fab fa-instagram"></i></a>
-            <a href="#" class="social-btn youtube"><i class="fab fa-youtube"></i></a>
-            <a href="#" class="social-btn whatsapp"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://www.facebook.com/share/1AuZTHUXCh/" target="_blank" class="social-btn"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://www.instagram.com/jssf_media_cell" target="_blank" class="social-btn"><i class="fab fa-instagram"></i></a>
+            <a href="https://youtube.com/@jssfariser" target="_blank" class="social-btn"><i class="fab fa-youtube"></i></a>
+            <a href="https://whatsapp.com/channel/0029VasovGc545uy79cuG30Q" target="_blank" class="social-btn"><i class="fab fa-whatsapp"></i></a>
         </div>
-    </div>
-
-    <div class="dev-tag">DEVELOPED BY MEHTAB KHAN</div>
-
-    <a href="admin.html" class="admin-fab"><i class="fas fa-user-shield"></i></a>
+        <div class="dev-name">Developed by Mehtab Khan Dahri</div>
+    </footer>
 
     <script>
         const SB_URL = "https://dphtkbzfgiaxghommegd.supabase.co";
-        const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."; // توهان جي ڪي
+        const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRwaHRrYnpmZ2lheGdob21tZWdkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTA2MjMsImV4cCI6MjA5MDk4NjYyM30.GPHVERT8PzCwggjkwAQOLgYoSioSmSY0y8g3ZcrPHAU";
         const _client = supabase.createClient(SB_URL, SB_KEY);
 
         function toggleMenu(e) {
@@ -113,17 +131,43 @@
         }
         window.onclick = () => document.getElementById('dropdown-menu').style.display = 'none';
 
-        async function loadNews() {
+        async function fetchNews() {
             const list = document.getElementById('news-list');
-            const { data, error } = await _client.from('announcements').select('*').limit(5);
-            if(data) {
-                list.innerHTML = "";
-                data.forEach(item => {
-                    list.innerHTML += `<div class="news-card"><div class="news-title">${item.title}</div></div>`;
-                });
+            try {
+                const { data, error } = await _client
+                    .from('announcements')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                if (data && data.length > 0) {
+                    list.innerHTML = "";
+                    data.forEach(item => {
+                        const img = item.image_url ? `<img src="${item.image_url}" class="news-img">` : '';
+                        const date = new Date(item.created_at).toLocaleDateString('sd-PK', { day: 'numeric', month: 'long', year: 'numeric' });
+                        
+                        list.innerHTML += `
+                            <div class="news-card">
+                                ${img}
+                                <div class="news-content">
+                                    <div class="news-title">${item.title}</div>
+                                    <div class="news-msg">${item.message}</div>
+                                    <div style="font-size:14px; color:#888; margin-top:10px;">
+                                        <i class="far fa-calendar-alt"></i> ${date}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    list.innerHTML = "<p style='text-align:center;'>ڪا به خبر موجود ناهي.</p>";
+                }
+            } catch (err) {
+                list.innerHTML = "<p style='text-align:center; color:red;'>ڊيٽا لوڊ ڪرڻ ۾ غلطي آئي.</p>";
             }
         }
-        loadNews();
+        fetchNews();
     </script>
 </body>
 </html>
