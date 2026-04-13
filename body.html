@@ -4,59 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JSSF Central Body - مرڪزي باڊي</title>
-    
-    <link rel="manifest" href="manifest.json">
-    
     <link href="https://fonts.googleapis.com/css2?family=Lateef&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <style>
-        :root { --red: #d32f2f; --dark: #1a1a1a; }
-        body { 
-            font-family: 'Lateef', cursive; 
-            background: #f4f4f4; 
-            margin: 0; 
-            padding-bottom: 50px; 
-            font-size: 24px; 
-            text-align: center;
-        }
-        .header { 
-            background: var(--red); 
-            color: white; 
-            padding: 30px 10px; 
-            margin-bottom: 30px; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-        .container { max-width: 600px; margin: auto; padding: 0 15px; }
+        :root { --red: #d32f2f; --blue: #0d2a4a; --bg: #f4f7f6; }
+        body { font-family: 'Lateef', cursive; background: var(--bg); margin: 0; padding-bottom: 50px; font-size: 22px; direction: rtl; }
+        .header { background: var(--blue); color: white; padding: 40px 10px; text-align: center; border-bottom: 5px solid var(--red); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .container { max-width: 700px; margin: auto; padding: 20px; }
         
-        /* عهديدار ڪارڊ */
-        .member-card { 
-            background: white; 
-            margin-bottom: 15px; 
-            padding: 20px; 
-            border-radius: 12px; 
-            box-shadow: 0 3px 6px rgba(0,0,0,0.1); 
-            border-right: 8px solid var(--red);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .profile-card {
+            background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px;
+            display: flex; align-items: center; gap: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-right: 10px solid var(--red);
             transition: 0.3s;
         }
-        .member-card:hover { transform: scale(1.02); }
+        .profile-card:hover { transform: translateY(-5px); }
+        .member-img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--blue); background: #eee; flex-shrink: 0; }
         
-        .post-title { color: var(--red); font-weight: bold; font-size: 26px; }
-        .member-name { color: var(--dark); font-weight: 500; }
+        .info { flex: 1; text-align: right; }
+        .post-tag { color: var(--red); font-weight: bold; font-size: 18px; background: #fff0f0; padding: 2px 10px; border-radius: 10px; }
+        .name { color: var(--blue); font-size: 28px; font-weight: bold; margin: 5px 0; }
+        .bio { font-size: 18px; color: #666; margin: 0; line-height: 1.4; }
 
-        .loading { color: #888; padding: 50px; font-size: 22px; }
-        .back-link { 
-            display: inline-block; 
-            margin-top: 30px; 
-            text-decoration: none; 
-            color: var(--red); 
-            font-weight: bold; 
-            border-bottom: 2px solid var(--red);
+        .loading { text-align: center; padding: 50px; color: #888; }
+        .back-link { display: block; text-align: center; margin-top: 30px; text-decoration: none; color: var(--blue); font-weight: bold; }
+        
+        @media (max-width: 500px) {
+            .profile-card { flex-direction: column; text-align: center; }
+            .info { text-align: center; }
         }
     </style>
 </head>
@@ -67,65 +43,55 @@
         <p>جيئي سنڌ اسٽوڊنٽس فيڊريشن (جساف)</p>
     </div>
 
-    <div class="container">
-        <div id="body-list">
-            <div class="loading"><i class="fas fa-spinner fa-spin"></i> لوڊ ٿي رهيو آهي...</div>
-        </div>
-
-        <a href="index.html" class="back-link"><i class="fas fa-arrow-right"></i> واپس مکيه صفحي تي وڃو</a>
+    <div class="container" id="body-list">
+        <div class="loading"><i class="fas fa-spinner fa-spin"></i> لوڊ ٿي رهيو آهي...</div>
     </div>
+
+    <a href="index.html" class="back-link"><i class="fas fa-arrow-right"></i> واپس مکيه صفحي تي وڃو</a>
 
     <script>
         const SB_URL = "https://dphtkbzfgiaxghommegd.supabase.co";
         const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRwaHRrYnpmZ2lheGdob21tZWdkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTA2MjMsImV4cCI6MjA5MDk4NjYyM30.GPHVERT8PzCwggjkwAQOLgYoSioSmSY0y8g3ZcrPHAU";
         const _client = supabase.createClient(SB_URL, SB_KEY);
-
-        const posts = ["صدر", "نائب صدر", "جنرل سيڪريٽري", "تعليم سيڪريٽري", "جوئٽ سيڪريٽري", "مالياتي سيڪريٽري", "پريس سيڪريٽري"];
+        const posts = ["مرڪزي صدر", "نائب صدر", "جنرل سيڪريٽري", "تعليم سيڪريٽري", "جوائنٽ سيڪريٽري", "مالياتي سيڪريٽري", "پريس سيڪريٽري"];
 
         async function fetchBody() {
             const listDiv = document.getElementById('body-list');
-
             try {
-                // Settings ٽيبل مان باڊي جا نالا کڻڻ
-                const { data, error } = await _client
-                    .from('settings')
-                    .select('body_names')
-                    .eq('id', 1)
-                    .single();
-
+                const { data, error } = await _client.from('settings').select('body_members').eq('id', 1).single();
+                
                 if (error) throw error;
 
-                if (data && data.body_names) {
-                    let names = data.body_names;
-                    
-                    // جيڪڏهن ڊيٽا String صورت ۾ آهي ته ان کي Array ۾ مٽايو
-                    if (typeof names === 'string') {
-                        names = JSON.parse(names);
-                    }
-
-                    listDiv.innerHTML = ""; // پراڻي لوڊنگ هٽايو
-                    
-                    names.forEach((name, index) => {
-                        if (name && name.trim() !== "") {
-                            listDiv.innerHTML += `
-                                <div class="member-card">
-                                    <span class="post-title">${posts[index]}</span>
-                                    <span class="member-name">${name}</span>
-                                </div>
-                            `;
-                        }
+                listDiv.innerHTML = "";
+                // جيڪڏهن ڊيٽا ملي وڃي
+                if (data && data.body_members && Array.isArray(data.body_members)) {
+                    data.body_members.forEach((m, i) => {
+                        renderCard(m.name, m.photo, m.bio, posts[i], listDiv);
                     });
                 } else {
-                    listDiv.innerHTML = "<p>هن وقت باڊي جي ڊيٽا موجود ناهي.</p>";
+                    // جيڪڏهن ڊيٽا خالي آهي ته خالي ڪارڊ ڏيکاريو
+                    posts.forEach(p => renderCard("---", "", "تعارف دستياب ناهي.", p, listDiv));
                 }
-
             } catch (err) {
-                console.error("Error loading body:", err);
-                listDiv.innerHTML = "<p style='color:red;'>ڊيٽا لوڊ ڪرڻ ۾ غلطي آئي آهي. مهرباني ڪري ايڊمن پينل مان نالا اپڊيٽ ڪريو.</p>";
+                console.error("Error:", err);
+                listDiv.innerHTML = "<p style='color:red; text-align:center;'>ڊيٽا لوڊ نه ٿي سگهي. مهرباني ڪري ايڊمن پينل مان باڊي اپڊيٽ ڪريو.</p>";
             }
         }
 
-        // پيج لوڊ ٿيڻ تي فنڪشن هلايو
+        function renderCard(name, photo, bio, post, container) {
+            const img = photo || "https://via.placeholder.com/150?text=JSSF";
+            container.innerHTML += `
+                <div class="profile-card">
+                    <img src="${img}" class="member-img">
+                    <div class="info">
+                        <span class="post-tag">${post}</span>
+                        <h2 class="name">${name || '---'}</h2>
+                        <p class="bio">${bio || 'تنظيم جو مخلص ڪارڪن.'}</p>
+                    </div>
+                </div>
+            `;
+        }
+
         fetchBody();
     </script>
 </body>
