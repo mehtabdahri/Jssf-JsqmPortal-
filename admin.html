@@ -8,96 +8,79 @@
     <link href="https://fonts.googleapis.com/css2?family=Lateef&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --red: #d32f2f; --dark: #1a1a1a; --bg: #f0f2f5; }
+        :root { --red: #d32f2f; --dark: #1a1a1a; --bg: #f4f7f6; --blue: #0d2a4a; }
         body { font-family: 'Lateef', cursive; background: var(--bg); margin: 0; font-size: 20px; direction: rtl; }
-        
-        /* Lock Screen */
         #lock-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--dark); display: flex; align-items: center; justify-content: center; z-index: 10000; }
         .login-box { background: #222; padding: 30px; border-radius: 15px; border: 2px solid var(--red); text-align: center; width: 90%; max-width: 350px; }
-
-        /* Navigation */
         .admin-nav { background: var(--red); padding: 10px; display: flex; overflow-x: auto; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
-        .admin-nav button { background: rgba(255,255,255,0.1); border: 1px solid white; color: white; margin: 0 5px; padding: 8px 15px; border-radius: 5px; font-family: 'Lateef'; cursor: pointer; white-space: nowrap; font-size: 18px; }
+        .admin-nav button { background: rgba(255,255,255,0.1); border: 1px solid white; color: white; margin: 0 5px; padding: 8px 15px; border-radius: 5px; font-family: 'Lateef'; cursor: pointer; white-space: nowrap; transition: 0.3s; }
         .admin-nav button.active { background: white; color: var(--red); font-weight: bold; }
-
-        .container { max-width: 800px; margin: 20px auto; padding: 10px; }
+        .container { max-width: 850px; margin: 20px auto; padding: 10px; }
         .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 25px; border-right: 6px solid var(--red); }
-        
-        h3 { margin-top: 0; color: var(--dark); display: flex; align-items: center; gap: 10px; }
+        .member-row { background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #eee; }
+        .row-inputs { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
         input, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; font-family: 'Lateef'; font-size: 20px; box-sizing: border-box; }
-        
-        button.action-btn { width: 100%; padding: 15px; background: var(--red); color: white; border: none; border-radius: 8px; font-size: 24px; cursor: pointer; transition: 0.3s; font-family: 'Lateef'; }
-        button.action-btn:hover { background: var(--dark); }
-
-        /* Tables */
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; font-size: 18px; }
+        button.action-btn { width: 100%; padding: 15px; background: var(--red); color: white; border: none; border-radius: 8px; font-size: 24px; cursor: pointer; font-family: 'Lateef'; transition: 0.3s; }
+        .tab-content { display: none; }
+        .active-tab { display: block; }
+        .status { font-weight: bold; text-align: center; margin-top: 10px; padding: 10px; border-radius: 5px; }
+        table { width: 100%; border-collapse: collapse; background: white; }
         th, td { border: 1px solid #ddd; padding: 12px; text-align: right; }
         th { background: #f8f8f8; color: var(--red); }
-
-        .tab-content { display: none; animation: fadeIn 0.4s; }
-        .active-tab { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .status { font-weight: bold; text-align: center; margin-top: 10px; padding: 5px; border-radius: 5px; }
     </style>
 </head>
 <body>
 
     <div id="lock-screen">
         <div class="login-box">
-            <h2 style="color: white;">ايڊمن سيڪيورٽي</h2>
+            <h2 style="color: white;">JSSF ايڊمن سيڪيورٽي</h2>
             <input type="password" id="pass-input" placeholder="پاس ڪوڊ لکو...">
             <button class="action-btn" onclick="verifyAccess()">کوليو</button>
         </div>
     </div>
 
     <div class="admin-nav">
-        <button onclick="showTab('news-tab', this)" class="active">پريس رليز</button>
-        <button onclick="showTab('body-tab', this)">باڊي ڪنٽرول</button>
-        <button onclick="showTab('lib-tab', this)">لائبرري اپلوڊ</button>
-        <button onclick="showTab('complaints-tab', this)">شڪايتون ڏسو</button>
+        <button onclick="showTab('body-tab', this)" class="active">باڊي ڪنٽرول</button>
+        <button onclick="showTab('news-tab', this)">پريس رليز</button>
+        <button onclick="showTab('lib-tab', this)">لائبرري</button>
+        <button onclick="showTab('complaints-tab', this)">شڪايتون</button>
     </div>
 
     <div class="container">
-        <div id="news-tab" class="tab-content active-tab">
+        <div id="body-tab" class="tab-content active-tab">
             <div class="card">
-                <h3><i class="fas fa-bullhorn"></i> نيوز ۽ پريس رليز موڪليو</h3>
-                <input type="text" id="n-title" placeholder="خبر جو عنوان">
-                <textarea id="n-msg" rows="4" placeholder="خبر جو تفصيل لکو..."></textarea>
-                <input type="file" id="n-file" accept="image/*">
-                <button class="action-btn" onclick="uploadData('news')">شايع ڪريو</button>
-                <div id="st-news" class="status"></div>
+                <h3><i class="fas fa-users-cog"></i> مرڪزي باڊي اپڊيٽ ڪريو</h3>
+                <div id="body-form"></div>
+                <button class="action-btn" onclick="updateFullBody()">مڪمل باڊي سيو ڪريو</button>
+                <div id="st-body" class="status"></div>
             </div>
         </div>
 
-        <div id="body-tab" class="tab-content">
+        <div id="news-tab" class="tab-content">
             <div class="card">
-                <h3><i class="fas fa-users-cog"></i> مرڪزي باڊي اپڊيٽ (7 عهدا)</h3>
-                <input type="text" id="pos1" placeholder="مرڪزي صدر">
-                <input type="text" id="pos2" placeholder="نائب صدر">
-                <input type="text" id="pos3" placeholder="جنرل سيڪريٽري">
-                <input type="text" id="pos4" placeholder="تعليم سيڪريٽري">
-                <input type="text" id="pos5" placeholder="جوائنٽ سيڪريٽري">
-                <input type="text" id="pos6" placeholder="مالياتي سيڪريٽري">
-                <input type="text" id="pos7" placeholder="پريس سيڪريٽري">
-                <button class="action-btn" onclick="updateBody()">باڊي اپڊيٽ ڪريو</button>
-                <div id="st-body" class="status"></div>
+                <h3><i class="fas fa-bullhorn"></i> نئين خبر لڳايو</h3>
+                <input type="text" id="n-title" placeholder="خبر جو عنوان">
+                <textarea id="n-msg" rows="4" placeholder="خبر جو تفصيل..."></textarea>
+                <input type="file" id="n-file" accept="image/*">
+                <button class="action-btn" onclick="uploadNews()">شايع ڪريو</button>
+                <div id="st-news" class="status"></div>
             </div>
         </div>
 
         <div id="lib-tab" class="tab-content">
             <div class="card">
-                <h3><i class="fas fa-book"></i> ڪتاب يا PDF اپلوڊ ڪريو</h3>
-                <input type="text" id="b-title" placeholder="ڪتاب جو نالو">
+                <h3><i class="fas fa-book"></i> لائبرري (ڪتاب اپلوڊ)</h3>
+                <input type="text" id="b-title" placeholder="ڪتاب جو عنوان">
                 <input type="file" id="b-file" accept=".pdf">
-                <button class="action-btn" onclick="uploadData('library')">لائبرري ۾ سيو ڪريو</button>
+                <button class="action-btn" onclick="uploadToLibrary()">ڪتاب لائبرري ۾ سيو ڪريو</button>
                 <div id="st-lib" class="status"></div>
             </div>
         </div>
 
         <div id="complaints-tab" class="tab-content">
             <div class="card">
-                <h3><i class="fas fa-inbox"></i> ميمبرن جون شڪايتون</h3>
-                <div id="complaints-view" style="overflow-x:auto;">لوڊ ٿي رهيو آهي...</div>
+                <h3><i class="fas fa-inbox"></i> مليل پيغام</h3>
+                <div id="complaints-view">لوڊ ٿي رهيو آهي...</div>
             </div>
         </div>
     </div>
@@ -108,12 +91,27 @@
         const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRwaHRrYnpmZ2lheGdob21tZWdkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTA2MjMsImV4cCI6MjA5MDk4NjYyM30.GPHVERT8PzCwggjkwAQOLgYoSioSmSY0y8g3ZcrPHAU";
         const _client = supabase.createClient(SB_URL, SB_KEY);
 
+        const posts = ["مرڪزي صدر", "نائب صدر", "جنرل سيڪريٽري", "تعليم سيڪريٽري", "جوائنٽ سيڪريٽري", "مالياتي سيڪريٽري", "پريس سيڪريٽري"];
+
+        // فارم تيار ڪرڻ
+        const bodyForm = document.getElementById('body-form');
+        posts.forEach((p, i) => {
+            bodyForm.innerHTML += `
+                <div class="member-row">
+                    <div class="row-inputs">
+                        <strong style="width:120px;">${p}:</strong>
+                        <input type="text" id="b-n${i}" placeholder="نالو لکو">
+                        <input type="file" id="b-i${i}" accept="image/*">
+                    </div>
+                    <textarea id="b-b${i}" rows="2" placeholder="مختصر تعارف..."></textarea>
+                </div>
+            `;
+        });
+
         function verifyAccess() {
             if(document.getElementById('pass-input').value === PASSCODE) {
                 document.getElementById('lock-screen').style.display = "none";
-            } else {
-                alert("غلط پاس ڪوڊ!");
-            }
+            } else { alert("غلط پاس ڪوڊ!"); }
         }
 
         function showTab(id, btn) {
@@ -124,67 +122,83 @@
             if(id === 'complaints-tab') fetchComplaints();
         }
 
-        async function fetchComplaints() {
-            const { data, error } = await _client.from('complaints').select('*').order('created_at', {ascending: false});
-            if(error) { document.getElementById('complaints-view').innerText = "ايرر: " + error.message; return; }
-            
-            let html = `<table><tr><th>نالو</th><th>نمبر</th><th>شڪايت</th></tr>`;
-            data.forEach(c => {
-                // Undefined مسئلو حل ڪرڻ لاءِ user_name استعمال ڪيو ويو آهي
-                html += `<tr><td>${c.user_name || 'نامعلوم'}</td><td>${c.phone}</td><td>${c.message}</td></tr>`;
-            });
-            document.getElementById('complaints-view').innerHTML = html + `</table>`;
+        // لائبرري اپلوڊ (فڪسڊ)
+        async function uploadToLibrary() {
+            const file = document.getElementById('b-file').files[0];
+            const title = document.getElementById('b-title').value.trim();
+            const status = document.getElementById('st-lib');
+
+            if(!file || !title) return alert("عنوان ۽ فائل لازمي آهي!");
+            status.innerHTML = "اپلوڊ ٿي رهيو آهي...";
+
+            try {
+                const path = `library/${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+                await _client.storage.from('jssf-media').upload(path, file);
+                const { data: urlData } = _client.storage.from('jssf-media').getPublicUrl(path);
+
+                const { error } = await _client.from('library').insert([{ title: title, link: urlData.publicUrl }]);
+                if(error) throw error;
+
+                alert("ڪتاب ڪاميابيءَ سان سيو ٿيو!");
+                location.reload();
+            } catch (e) { status.innerHTML = "غلطي: " + e.message; }
         }
 
-        async function updateBody() {
+        // باڊي اپڊيٽ (ٽيبل نالو درست ڪيو ويو)
+        async function updateFullBody() {
             const status = document.getElementById('st-body');
-            const names = [1,2,3,4,5,6,7].map(i => document.getElementById(`pos${i}`).value || "---");
+            status.innerHTML = "ميمبر اپڊيٽ ٿي رهيا آهن...";
             
-            status.innerHTML = "اپڊيٽ ٿي رهيو آهي...";
-            const { error } = await _client.from('settings').upsert({ id: 1, body_names: names });
-            
-            if(!error) {
+            try {
+                for(let i=0; i<posts.length; i++) {
+                    const name = document.getElementById(`b-n${i}`).value;
+                    const bio = document.getElementById(`b-b${i}`).value;
+                    const file = document.getElementById(`b-i${i}`).files[0];
+                    
+                    if(!name) continue;
+
+                    let imgUrl = "";
+                    if(file) {
+                        const path = `body/${Date.now()}_member_${i}`;
+                        await _client.storage.from('jssf-media').upload(path, file);
+                        imgUrl = _client.storage.from('jssf-media').getPublicUrl(path).data.publicUrl;
+                    }
+
+                    await _client.from('body_members').upsert({ 
+                        post: posts[i], 
+                        name: name, 
+                        bio: bio || "جيئي سنڌ!", 
+                        photo: imgUrl 
+                    }, { onConflict: 'post' });
+                }
                 status.innerHTML = "باڊي ڪاميابيءَ سان اپڊيٽ ٿي وئي!";
-                status.style.color = "green";
-            } else {
-                status.innerHTML = "غلطي: " + error.message;
-                status.style.color = "red";
-            }
+            } catch (e) { status.innerHTML = "غلطي: " + e.message; }
         }
 
-        async function uploadData(type) {
-            let file, title, msg = "", table, stId;
-            if(type === 'news') {
-                file = document.getElementById('n-file').files[0];
-                title = document.getElementById('n-title').value;
-                msg = document.getElementById('n-msg').value;
-                table = 'announcements'; stId = 'st-news';
-            } else {
-                file = document.getElementById('b-file').files[0];
-                title = document.getElementById('b-title').value;
-                table = 'library'; stId = 'st-lib';
-            }
+        async function uploadNews() {
+            const file = document.getElementById('n-file').files[0];
+            const title = document.getElementById('n-title').value;
+            const msg = document.getElementById('n-msg').value;
+            const status = document.getElementById('st-news');
 
-            if(!file || !title) return alert("مھرباني ڪري فائل ۽ عنوان ڏيو!");
-            const status = document.getElementById(stId);
-            status.innerHTML = "اپلوڊنگ جاري آهي...";
+            try {
+                let imgUrl = "";
+                if(file) {
+                    const path = `news/${Date.now()}_${file.name}`;
+                    await _client.storage.from('jssf-media').upload(path, file);
+                    imgUrl = _client.storage.from('jssf-media').getPublicUrl(path).data.publicUrl;
+                }
+                await _client.from('announcements').insert([{ title, message: msg, image_url: imgUrl }]);
+                alert("خبر شايع ٿي وئي!");
+                location.reload();
+            } catch (e) { status.innerHTML = "غلطي: " + e.message; }
+        }
 
-            const path = `${type}/${Date.now()}_${file.name}`;
-            const { error: storageErr } = await _client.storage.from('jssf-media').upload(path, file);
-            if(storageErr) { status.innerHTML = "Storage Error: " + storageErr.message; return; }
-
-            const { data: urlData } = _client.storage.from('jssf-media').getPublicUrl(path);
-            let payload = { title };
-            if(type === 'library') payload.link = urlData.publicUrl;
-            else { payload.image_url = urlData.publicUrl; payload.message = msg; }
-
-            const { error } = await _client.from(table).insert([payload]);
-            if(!error) {
-                status.innerHTML = "ڪاميابي سان شايع ٿي ويو!";
-                setTimeout(() => location.reload(), 1500);
-            } else {
-                status.innerHTML = "ڊيٽابيس غلطي: " + error.message;
-            }
+        async function fetchComplaints() {
+            const { data } = await _client.from('complaints').select('*').order('created_at', {ascending: false});
+            let html = `<table><tr><th>نالو</th><th>پيغام</th></tr>`;
+            data?.forEach(c => { html += `<tr><td>${c.user_name}</td><td>${c.message}</td></tr>`; });
+            document.getElementById('complaints-view').innerHTML = html + `</table>`;
         }
     </script>
 </body>
