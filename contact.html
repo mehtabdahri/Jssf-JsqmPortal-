@@ -1,0 +1,82 @@
+#ff0034<!DOCTYPE html>
+<html lang="sd" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact JSSF - رابطو ڪريو</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lateef&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --blue: #0d2a4a; --red: #d32f2f; --green: #25d366; --white: #ffffff; }
+        body { font-family: 'Lateef', cursive; background: #f4f7f6; margin: 0; padding: 0; font-size: 22px; color: #333; }
+        
+        .header { background: var(--blue); color: white; padding: 25px; text-align: center; position: relative; border-bottom: 5px solid var(--red); }
+        .back-btn { position: absolute; right: 15px; top: 25px; color: white; text-decoration: none; font-size: 24px; }
+
+        .container { padding: 20px; max-width: 700px; margin: auto; }
+        
+        /* رابطو ڪارڊ */
+        .contact-card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; margin-bottom: 25px; border-top: 5px solid var(--blue); }
+        .contact-card i { font-size: 40px; color: var(--red); margin-bottom: 15px; }
+        .contact-card h3 { margin: 10px 0; color: var(--blue); font-size: 30px; }
+        
+        /* سوشل لنڪس */
+        .social-box { display: flex; justify-content: center; gap: 20px; margin-top: 20px; flex-wrap: wrap; }
+        .social-btn { padding: 12px 25px; border-radius: 30px; text-decoration: none; color: white; font-weight: bold; display: flex; align-items: center; gap: 10px; transition: 0.3s; }
+        .whatsapp { background: var(--green); }
+        .facebook { background: #1877f2; }
+        .youtube { background: #ff0000; }
+        .social-btn:hover { transform: scale(1.05); opacity: 0.9; }
+
+        /* ميسيج فارم */
+        .msg-form { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .msg-form input, .msg-form textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Lateef', cursive; font-size: 20px; box-sizing: border-box; text-align: right; }
+        .submit-btn { background: var(--red); color: white; border: none; padding: 12px 40px; border-radius: 25px; cursor: pointer; font-size: 22px; font-weight: bold; width: 100%; transition: 0.3s; }
+        .submit-btn:hover { background: #b71c1c; }
+
+        .footer-note { text-align: center; padding: 30px; color: #999; font-size: 16px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="index.html" class="back-btn"><i class="fas fa-arrow-right"></i></a>
+        <h2>رابطو ڪريو - JSSF</h2>
+    </div>
+
+    <div class="container">
+        
+        <div class="contact-card">
+            <i class="fas fa-university"></i>
+            <h3>مرڪزي آفيس</h3>
+            <p>جيئي سنڌ اسٽوڊنٽس فيڊريشن (JSSF)<br>سنڌو ديش جي آزاديءَ جي جاکوڙ جو شاگرد پليٽ فارم</p>
+            
+            <div class="social-box">
+                <a href="https://wa.me/yournumber" class="social-btn whatsapp">
+                    <i class="fab fa-whatsapp"></i> واٽس اپ
+                </a>
+                <a href="#" class="social-btn facebook">
+                    <i class="fab fa-facebook-f"></i> فيسبوڪ
+                </a>
+                <a href="#" class="social-btn youtube">
+                    <i class="fab fa-youtube"></i> يوٽيوب
+                </a>
+            </div>
+        </div>
+
+        <div class="msg-form">
+            <h3 style="text-align: center; color: var(--blue);">اسان کي پيغام موڪليو</h3>
+            <form action="#">
+                <input type="text" placeholder="توهان جو نالو" required>
+                <input type="email" placeholder="اي ميل پتو" required>
+                <input type="text" placeholder="تعليمي ادارو / يونيفورسٽي">
+                <textarea rows="5" placeholder="توهان جو پيغام يا ميمبرشپ بابت سوال..."></textarea>
+                <button type="submit" class="submit-btn">پيغام موڪليو</button>
+            </form>
+        </div>
+
+        <div class="footer-note">ڊزائين ڪندڙ: مهتاب خان ڏاهري | 2K22/SWEE/42</div>
+    </div>
+
+</body>
+</html>
