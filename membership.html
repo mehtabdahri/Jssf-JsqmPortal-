@@ -3,46 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ميمبرشپ فارم</title>
+    <title>JSSF Membership - ميمبرشپ جا قانون</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lateef&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { font-family: sans-serif; background: #f4f4f4; margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; }
-        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); width: 90%; max-width: 400px; text-align: center; border-top: 6px solid #2a9d8f; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #eee; border-radius: 10px; box-sizing: border-box; font-size: 16px; }
-        button { background: #2a9d8f; color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; width: 100%; font-size: 18px; font-weight: bold; margin-top: 10px; }
-        .back-link { display: block; margin-top: 15px; color: #666; text-decoration: none; font-size: 14px; }
+        :root { --blue: #0d2a4a; --red: #d32f2f; --green: #1b5e20; --white: #ffffff; }
+        body { font-family: 'Lateef', cursive; background: #f4f7f6; margin: 0; padding: 0; font-size: 24px; color: #333; line-height: 1.6; }
+        
+        .header { background: var(--blue); color: white; padding: 25px; text-align: center; position: relative; border-bottom: 5px solid var(--red); }
+        .back-btn { position: absolute; right: 15px; top: 25px; color: white; text-decoration: none; font-size: 26px; }
+
+        .container { padding: 20px; max-width: 850px; margin: auto; }
+        
+        .section-card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-right: 8px solid var(--red); margin-bottom: 25px; }
+        .section-card h3 { color: var(--blue); border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 0; font-size: 34px; }
+
+        .rule-item { display: flex; align-items: flex-start; gap: 15px; margin-bottom: 20px; padding: 10px; border-bottom: 1px solid #f0f0f0; }
+        .rule-item i { color: var(--red); font-size: 24px; margin-top: 5px; }
+        .rule-text { flex: 1; }
+
+        .form-btn { background: var(--blue); color: white; padding: 15px 30px; border-radius: 35px; text-decoration: none; display: inline-flex; align-items: center; gap: 10px; font-weight: bold; transition: 0.3s; margin-top: 20px; }
+        .form-btn:hover { background: var(--red); transform: scale(1.02); }
+
+        .footer-note { text-align: center; padding: 30px; color: #777; font-size: 18px; border-top: 1px solid #ddd; margin-top: 20px; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h2 style="color:#1d3557;">ميمبرشپ فارم</h2>
-        <input type="text" id="name" placeholder="مڪمل نالو">
-        <input type="text" id="father" placeholder="پيءُ جو نالو">
-        <input type="text" id="whatsapp" placeholder="واٽس اپ نمبر">
-        <button id="saveBtn">پورٽل تي محفوظ ٿيو</button>
-        <a href="index.html" class="back-link">← واپس مين پيج تي وڃو</a>
+
+    <div class="header">
+        <a href="index.html" class="back-btn"><i class="fas fa-arrow-right"></i></a>
+        <h2>جيئي سنڌ اسٽوڊنٽس فيڊريشن - ميمبرشپ</h2>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-        const firebaseConfig = {
-            apiKey: "AIzaSyDTQkbwawj4Hxihxx3Z0hcwS3HhuNjXttw",
-            databaseURL: "https://jssf-jsqm-portal-ed46c-default-rtdb.firebaseio.com",
-            projectId: "jssf-jsqm-portal-ed46c",
-            appId: "1:583976265356:web:d6753b8eb3a96aa5f83da9"
-        };
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
+    <div class="container">
+        
+        <div class="section-card">
+            <h3><i class="fas fa-user-check"></i> ميمبرشپ لاءِ اهليت</h3>
+            
+            <div class="rule-item">
+                <i class="fas fa-check-circle"></i>
+                <div class="rule-text">هر اهو شاگرد جيڪو سنڌ جي ڪنهن به تعليمي اداري ۾ پڙهندو هجي، جساف جو ميمبر بڻجي سگهي ٿو.</div>
+            </div>
 
-        document.getElementById('saveBtn').onclick = () => {
-            const n = document.getElementById('name').value;
-            const f = document.getElementById('father').value;
-            const w = document.getElementById('whatsapp').value;
-            if(n && w) {
-                push(ref(db, 'members'), { fullName: n, fatherName: f, whatsapp: w, date: new Date().toLocaleString() })
-                .then(() => { alert("رجسٽريشن ڪامياب!"); window.location.href="index.html"; });
-            } else { alert("مهرباني ڪري نالو ۽ نمبر لکو."); }
-        };
-    </script>
+            <div class="rule-item">
+                <i class="fas fa-check-circle"></i>
+                <div class="rule-text">ميمبر کي تنظيم جي منشور ۽ آئين سان مڪمل اتفاق ڪرڻو پوندو.</div>
+            </div>
+
+            <div class="rule-item">
+                <i class="fas fa-check-circle"></i>
+                <div class="rule-text">ميمبر ڪنهن به ٻي سياسي يا شاگرد تنظيم جو ميمبر نه هجي.</div>
+            </div>
+        </div>
+
+        <div class="section-card" style="border-right-color: var(--green);">
+            <h3 style="color: var(--green);"><i class="fas fa-tasks"></i> ميمبر جا فرض</h3>
+            
+            <div class="rule-item">
+                <i class="fas fa-star" style="color: var(--green);"></i>
+                <div class="rule-text">تنظيمي نظم و ضبط (Discipline) جي مڪمل پابندي ڪرڻ.</div>
+            </div>
+
+            <div class="rule-item">
+                <i class="fas fa-star" style="color: var(--green);"></i>
+                <div class="rule-text">تنظيم جي پروگرامن ۽ گڏجاڻين ۾ باقاعدي شرڪت ڪرڻ.</div>
+            </div>
+
+            <div class="rule-item">
+                <i class="fas fa-star" style="color: var(--green);"></i>
+                <div class="rule-text">شاگردن ۾ تنظيم جو پيغام ۽ سائين جي ايم سيد جو فڪر پهچائڻ.</div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <h3 style="color: var(--red);"><i class="fas fa-user-times"></i> ميمبرشپ جو خاتمو</h3>
+            <p>هيٺين صورتن ۾ ميمبرشپ ختم ٿي سگهي ٿي:</p>
+            <ul style="padding-right: 25px; color: #555;">
+                <li>تنظيمي غداري يا آئين جي سنگين ڀڃڪڙي ڪرڻ تي.</li>
+                <li>استعيفيٰ ڏيڻ جي صورت ۾.</li>
+                <li>تعليمي اداري مان تعليم مڪمل ڪرڻ يا تعليم ڇڏي ڏيڻ تي.</li>
+            </ul>
+        </div>
+
+        <div style="text-align: center;">
+            <a href="contact.html" class="form-btn">
+                <i class="fas fa-edit"></i> ميمبرشپ لاءِ فارم حاصل ڪريو
+            </a>
+        </div>
+
+        <div class="footer-note">ڊزائين ڪندڙ: مهتاب خان ڏاهري | 2K22/SWEE/42</div>
+    </div>
+
 </body>
 </html>
