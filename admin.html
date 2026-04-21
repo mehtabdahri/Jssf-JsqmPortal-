@@ -23,8 +23,8 @@
         button.action-btn { width: 100%; padding: 15px; background: var(--red); color: white; border: none; border-radius: 8px; font-size: 24px; cursor: pointer; font-family: 'Lateef'; transition: 0.3s; }
         .tab-content { display: none; }
         .active-tab { display: block; }
-        .status { font-weight: bold; text-align: center; margin-top: 10px; padding: 10px; border-radius: 5px; }
-        table { width: 100%; border-collapse: collapse; background: white; }
+        .status { font-weight: bold; text-align: center; margin-top: 10px; padding: 10px; border-radius: 5px; min-height: 20px; }
+        table { width: 100%; border-collapse: collapse; background: white; margin-top: 10px; }
         th, td { border: 1px solid #ddd; padding: 12px; text-align: right; }
         th { background: #f8f8f8; color: var(--red); }
     </style>
@@ -61,6 +61,7 @@
                 <h3><i class="fas fa-bullhorn"></i> نئين خبر لڳايو</h3>
                 <input type="text" id="n-title" placeholder="خبر جو عنوان">
                 <textarea id="n-msg" rows="4" placeholder="خبر جو تفصيل..."></textarea>
+                <label>خبر جي تصوير:</label>
                 <input type="file" id="n-file" accept="image/*">
                 <button class="action-btn" onclick="uploadNews()">شايع ڪريو</button>
                 <div id="st-news" class="status"></div>
@@ -71,6 +72,7 @@
             <div class="card">
                 <h3><i class="fas fa-book"></i> لائبرري (ڪتاب اپلوڊ)</h3>
                 <input type="text" id="b-title" placeholder="ڪتاب جو عنوان">
+                <label>PDF فائل چونڊيو:</label>
                 <input type="file" id="b-file" accept=".pdf">
                 <button class="action-btn" onclick="uploadToLibrary()">ڪتاب لائبرري ۾ سيو ڪريو</button>
                 <div id="st-lib" class="status"></div>
@@ -80,6 +82,7 @@
         <div id="complaints-tab" class="tab-content">
             <div class="card">
                 <h3><i class="fas fa-inbox"></i> مليل پيغام</h3>
+                <button onclick="fetchComplaints()" style="padding: 5px 10px; margin-bottom: 10px; cursor:pointer;">Refresh</button>
                 <div id="complaints-view">لوڊ ٿي رهيو آهي...</div>
             </div>
         </div>
@@ -93,17 +96,16 @@
 
         const posts = ["مرڪزي صدر", "نائب صدر", "جنرل سيڪريٽري", "تعليم سيڪريٽري", "جوائنٽ سيڪريٽري", "مالياتي سيڪريٽري", "پريس سيڪريٽري"];
 
-        // فارم تيار ڪرڻ
         const bodyForm = document.getElementById('body-form');
         posts.forEach((p, i) => {
             bodyForm.innerHTML += `
                 <div class="member-row">
                     <div class="row-inputs">
-                        <strong style="width:120px;">${p}:</strong>
-                        <input type="text" id="b-n${i}" placeholder="نالو لکو">
+                        <strong style="width:120px; color: var(--blue);">${p}:</strong>
+                        <input type="text" id="b-n${i}" placeholder="ميمبر جو نالو">
                         <input type="file" id="b-i${i}" accept="image/*">
                     </div>
-                    <textarea id="b-b${i}" rows="2" placeholder="مختصر تعارف..."></textarea>
+                    <textarea id="b-b${i}" rows="2" placeholder="مختصر تعارف"></textarea>
                 </div>
             `;
         });
@@ -122,57 +124,53 @@
             if(id === 'complaints-tab') fetchComplaints();
         }
 
-        // لائبرري اپلوڊ (فڪسڊ)
+        // لائبرري اپلوڊ (فائلن جو نالو انگريزي ۾ ڪرڻ سان غلطي ختم ٿيندي)
         async function uploadToLibrary() {
             const file = document.getElementById('b-file').files[0];
             const title = document.getElementById('b-title').value.trim();
             const status = document.getElementById('st-lib');
 
             if(!file || !title) return alert("عنوان ۽ فائل لازمي آهي!");
-            status.innerHTML = "اپلوڊ ٿي رهيو آهي...";
+            status.innerHTML = "فائل اپلوڊ ٿي رهي آهي...";
 
             try {
-                const path = `library/${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
-                await _client.storage.from('jssf-media').upload(path, file);
+                const fileName = Date.now() + "_book.pdf"; // انگريزي نالو
+                const path = `library/${fileName}`;
+                const { error: upError } = await _client.storage.from('jssf-media').upload(path, file);
+                if(upError) throw upError;
+
                 const { data: urlData } = _client.storage.from('jssf-media').getPublicUrl(path);
+                const { error: insError } = await _client.from('library').insert([{ title: title, link: urlData.publicUrl }]);
+                if(insError) throw insError;
 
-                const { error } = await _client.from('library').insert([{ title: title, link: urlData.publicUrl }]);
-                if(error) throw error;
-
-                alert("ڪتاب ڪاميابيءَ سان سيو ٿيو!");
-                location.reload();
-            } catch (e) { status.innerHTML = "غلطي: " + e.message; }
+                status.innerHTML = "✅ ڪتاب سيو ٿيو!";
+            } catch (e) { status.innerHTML = "❌ غلطي: " + e.message; }
         }
 
-        // باڊي اپڊيٽ (ٽيبل نالو درست ڪيو ويو)
         async function updateFullBody() {
             const status = document.getElementById('st-body');
-            status.innerHTML = "ميمبر اپڊيٽ ٿي رهيا آهن...";
-            
+            status.innerHTML = "پروسيسنگ...";
+            let membersArray = [];
+
             try {
                 for(let i=0; i<posts.length; i++) {
-                    const name = document.getElementById(`b-n${i}`).value;
-                    const bio = document.getElementById(`b-b${i}`).value;
+                    const name = document.getElementById(`b-n${i}`).value.trim();
+                    const bio = document.getElementById(`b-b${i}`).value.trim();
                     const file = document.getElementById(`b-i${i}`).files[0];
-                    
-                    if(!name) continue;
+                    let imgUrl = "https://via.placeholder.com/150";
 
-                    let imgUrl = "";
                     if(file) {
-                        const path = `body/${Date.now()}_member_${i}`;
+                        const fileName = Date.now() + "_body_" + i + ".jpg";
+                        const path = `body/${fileName}`;
                         await _client.storage.from('jssf-media').upload(path, file);
                         imgUrl = _client.storage.from('jssf-media').getPublicUrl(path).data.publicUrl;
                     }
-
-                    await _client.from('body_members').upsert({ 
-                        post: posts[i], 
-                        name: name, 
-                        bio: bio || "جيئي سنڌ!", 
-                        photo: imgUrl 
-                    }, { onConflict: 'post' });
+                    membersArray.push({ post: posts[i], name: name || "خالي", bio: bio || "جيئي سنڌ!", photo: imgUrl });
                 }
-                status.innerHTML = "باڊي ڪاميابيءَ سان اپڊيٽ ٿي وئي!";
-            } catch (e) { status.innerHTML = "غلطي: " + e.message; }
+                const { error } = await _client.from('settings').upsert({ id: 1, body_members: membersArray });
+                if(error) throw error;
+                status.innerHTML = "✅ مرڪزي باڊي اپڊيٽ ٿي وئي!";
+            } catch (e) { status.innerHTML = "❌ غلطي: " + e.message; }
         }
 
         async function uploadNews() {
@@ -181,24 +179,34 @@
             const msg = document.getElementById('n-msg').value;
             const status = document.getElementById('st-news');
 
+            if(!title || !msg) return alert("عنوان لکو!");
+            status.innerHTML = "خبر اپلوڊ ٿي رهي آهي...";
+
             try {
                 let imgUrl = "";
                 if(file) {
-                    const path = `news/${Date.now()}_${file.name}`;
+                    const fileName = Date.now() + "_news.jpg";
+                    const path = `news/${fileName}`;
                     await _client.storage.from('jssf-media').upload(path, file);
                     imgUrl = _client.storage.from('jssf-media').getPublicUrl(path).data.publicUrl;
                 }
-                await _client.from('announcements').insert([{ title, message: msg, image_url: imgUrl }]);
-                alert("خبر شايع ٿي وئي!");
-                location.reload();
-            } catch (e) { status.innerHTML = "غلطي: " + e.message; }
+                const { error } = await _client.from('announcements').insert([{ title, message: msg, image_url: imgUrl }]);
+                if(error) throw error;
+                status.innerHTML = "✅ خبر شايع ٿي وئي!";
+            } catch (e) { status.innerHTML = "❌ غلطي: " + e.message; }
         }
 
         async function fetchComplaints() {
-            const { data } = await _client.from('complaints').select('*').order('created_at', {ascending: false});
-            let html = `<table><tr><th>نالو</th><th>پيغام</th></tr>`;
-            data?.forEach(c => { html += `<tr><td>${c.user_name}</td><td>${c.message}</td></tr>`; });
-            document.getElementById('complaints-view').innerHTML = html + `</table>`;
+            const container = document.getElementById('complaints-view');
+            try {
+                const { data, error } = await _client.from('complaints').select('*').order('created_at', {ascending: false});
+                if(error) throw error;
+                let html = `<table><tr><th>نالو</th><th>پيغام</th><th>تاريخ</th></tr>`;
+                data.forEach(c => { 
+                    html += `<tr><td>${c.user_name}</td><td>${c.message}</td><td>${new Date(c.created_at).toLocaleDateString('sd-PK')}</td></tr>`; 
+                });
+                container.innerHTML = html + `</table>`;
+            } catch (e) { container.innerHTML = "غلطي: " + e.message; }
         }
     </script>
 </body>
